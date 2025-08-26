@@ -18,7 +18,8 @@
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <spring-boot.version>3.4.5</spring-boot.version>
+        <framework.version>0.0.1-SNAPSHOT</framework.version>
+        <spring-boot.version>3.3.0</spring-boot.version>
         <spring-ai.version>1.0.0</spring-ai.version>
         <spring-ai-alibaba.version>1.0.0.2</spring-ai-alibaba.version>
         <spring-cloud.version>2023.0.1</spring-cloud.version>
@@ -26,12 +27,14 @@
         <lombok.version>1.18.30</lombok.version> <!-- 添加lombok版本 -->
         <mybatis.version>3.5.16</mybatis.version>
         <mybatis-spring-boot.version>3.0.3</mybatis-spring-boot.version>
+        <mybatis-plus.version>3.5.6</mybatis-plus.version>
         <hutool.version>5.8.22</hutool.version>
         <redisson.version>3.35.0</redisson.version>
         <guava.version>33.2.1-jre</guava.version>
         <caffeine.version>3.1.8</caffeine.version>
         <rockermq.version>5.3.1</rockermq.version>
         <fastjson2.version>2.0.52</fastjson2.version>
+        <knife4j.version>4.5.0</knife4j.version>
     </properties>
 
 
@@ -46,6 +49,7 @@
 
     <dependencyManagement>
         <dependencies>
+
             <!-- Spring Boot依赖管理 -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -80,6 +84,22 @@
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
                 <version>${mybatis-spring-boot.version}</version>
+            </dependency>
+            <!-- MyBatis-Plus依赖管理 -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-core</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-extension</artifactId>
+                <version>${mybatis-plus.version}</version>
             </dependency>
             <!-- Hutool工具库 -->
             <dependency>
@@ -122,8 +142,34 @@
                 <artifactId>fastjson2-extension-spring6</artifactId>
                 <version>${fastjson2.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.zicca.icoupon</groupId>
+                <artifactId>iCoupon-framework</artifactId>
+                <version>${framework.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+                <version>${knife4j.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
+
+    <repositories>
+        <!-- Maven Central - 优先级最高 -->
+        <repository>
+            <id>central</id>
+            <name>Maven Central</name>
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
+        <repository>
+            <id>aliyunmaven</id>
+            <name>阿里云公共仓库</name>
+            <url>https://maven.aliyun.com/repository/public</url>
+        </repository>
+    </repositories>
 
     <build>
         <plugins>
