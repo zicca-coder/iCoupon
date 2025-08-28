@@ -8,7 +8,6 @@ import com.zicca.icoupon.admin.merchant.common.context.UserContext;
 import com.zicca.icoupon.admin.merchant.common.enums.CouponTemplateStatusEnum;
 import com.zicca.icoupon.admin.merchant.common.enums.DiscountTargetEnum;
 import com.zicca.icoupon.admin.merchant.dao.entity.CouponTemplate;
-import com.zicca.icoupon.admin.merchant.dao.mapper.CouponTemplateGoodsMapper;
 import com.zicca.icoupon.admin.merchant.dao.mapper.CouponTemplateMapper;
 import com.zicca.icoupon.admin.merchant.dto.req.CouponTemplateCreateReqDTO;
 import com.zicca.icoupon.admin.merchant.dto.req.CouponTemplateNumberReqDTO;
