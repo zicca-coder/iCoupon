@@ -12,6 +12,7 @@
     <modules>
         <module>framework</module>
         <module>admin</module>
+        <module>distribution</module>
     </modules>
 
     <properties>
@@ -32,11 +33,12 @@
         <redisson.version>3.35.0</redisson.version>
         <guava.version>33.2.1-jre</guava.version>
         <caffeine.version>3.1.8</caffeine.version>
-        <rockermq.version>5.3.1</rockermq.version>
+        <rocketmq.version>2.3.0</rocketmq.version>
         <fastjson2.version>2.0.52</fastjson2.version>
         <knife4j.version>4.5.0</knife4j.version>
         <javafaker.version>1.0.2</javafaker.version>
         <easyexcel.version>4.0.1</easyexcel.version>
+        <minio.version>8.5.9</minio.version>
     </properties>
 
 
@@ -165,6 +167,12 @@
                 <artifactId>easyexcel</artifactId>
                 <version>${easyexcel.version}</version>
             </dependency>
+            <dependency>
+                <groupId>io.minio</groupId>
+                <artifactId>minio</artifactId>
+                <version>${minio.version}</version>
+            </dependency>
+
 
         </dependencies>
     </dependencyManagement>

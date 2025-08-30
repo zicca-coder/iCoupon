@@ -5,7 +5,7 @@ package com.zicca.icoupon.admin.merchant.common.constants;
  *
  * @author zicca
  */
-public class RedisConstant {
+public final class RedisConstant {
 
     /**
      * 优惠券模板缓存 Key

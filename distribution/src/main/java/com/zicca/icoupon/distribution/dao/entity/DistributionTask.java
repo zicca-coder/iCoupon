@@ -1,13 +1,14 @@
-package com.zicca.icoupon.admin.merchant.dao.entity;
+package com.zicca.icoupon.distribution.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.zicca.icoupon.admin.merchant.common.database.BaseDO;
-import com.zicca.icoupon.admin.merchant.common.enums.DistributionTaskStatusEnum;
-import com.zicca.icoupon.admin.merchant.common.enums.DistributionTaskTypeEnum;
-import com.zicca.icoupon.admin.merchant.common.enums.NotifyTypeEnum;
+
+import com.zicca.icoupon.distribution.common.database.BaseDO;
+import com.zicca.icoupon.distribution.common.enums.DistributionTaskStatusEnum;
+import com.zicca.icoupon.distribution.common.enums.DistributionTaskTypeEnum;
+import com.zicca.icoupon.distribution.common.enums.NotifyTypeEnum;
 import lombok.*;
 
 import java.util.Date;

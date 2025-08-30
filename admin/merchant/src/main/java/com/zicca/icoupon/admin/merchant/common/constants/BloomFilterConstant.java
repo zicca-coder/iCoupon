@@ -5,7 +5,7 @@ package com.zicca.icoupon.admin.merchant.common.constants;
  *
  * @author zicca
  */
-public class BloomFilterConstant {
+public final class BloomFilterConstant {
 
     public static final String COUPON_TEMPLATE_REDIS_BLOOM_FILTER = "coupon:filter:template:couponTemplateBloomFilter";
 }

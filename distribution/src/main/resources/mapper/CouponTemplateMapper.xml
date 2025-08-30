@@ -1,0 +1,31 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zicca.icoupon.distribution.dao.mapper.CouponTemplateMapper">
+
+    <!--增加优惠券模板发行量-->
+    <update id="increaseNumberCouponTemplate">
+        UPDATE t_coupon_template
+        SET stock = stock + #{number}
+        WHERE id = #{couponTemplateId}
+          AND shop_id = #{shopId}
+    </update>
+
+    <!--减少优惠券模板发行量-->
+    <update id="decreaseNumberCouponTemplate">
+        UPDATE t_coupon_template
+        SET stock = stock - #{number}
+        WHERE id = #{couponTemplateId}
+          AND shop_id = #{shopId}
+          AND stock >= #{number}
+    </update>
+
+    <select id="getCouponTemplateById" resultType="com.zicca.icoupon.distribution.dao.entity.CouponTemplate">
+        SELECT *
+        FROM t_coupon_template
+        WHERE id = #{id}
+          AND shop_id = #{shopId}
+          AND del_flag = 0
+    </select>
+
+</mapper>

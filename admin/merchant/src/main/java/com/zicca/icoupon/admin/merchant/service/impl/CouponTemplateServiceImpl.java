@@ -5,8 +5,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.zicca.icoupon.admin.merchant.common.context.UserContext;
-import com.zicca.icoupon.admin.merchant.common.enums.CouponTemplateStatusEnum;
-import com.zicca.icoupon.admin.merchant.common.enums.DiscountTargetEnum;
 import com.zicca.icoupon.admin.merchant.dao.entity.CouponTemplate;
 import com.zicca.icoupon.admin.merchant.dao.mapper.CouponTemplateMapper;
 import com.zicca.icoupon.admin.merchant.dto.req.CouponTemplateCreateReqDTO;
@@ -22,6 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+
+import static com.zicca.icoupon.admin.merchant.common.enums.CouponTemplateStatusEnum.*;
+import static com.zicca.icoupon.admin.merchant.common.enums.DiscountTargetEnum.PARTIAL;
 
 /**
  * 优惠券模板服务实现类
@@ -42,7 +43,7 @@ public class CouponTemplateServiceImpl extends ServiceImpl<CouponTemplateMapper,
         CouponTemplate couponTemplate = BeanUtil.copyProperties(requestParam, CouponTemplate.class);
         save(couponTemplate);
         // 如果不是全店通用券，则需要保存关联商品
-        if (DiscountTargetEnum.PARTIAL.equals(couponTemplate.getTarget())) {
+        if (PARTIAL == couponTemplate.getTarget()) {
             couponTemplateGoodsService.batchAssociateGoods(couponTemplate.getId(), requestParam.getGoodIds());
         }
     }
@@ -85,14 +86,14 @@ public class CouponTemplateServiceImpl extends ServiceImpl<CouponTemplateMapper,
     public void activeCouponTemplate(Long couponTemplateId) {
         CouponTemplate template = lambdaQuery().eq(CouponTemplate::getId, couponTemplateId)
                 .eq(CouponTemplate::getShopId, UserContext.getShopId())
-                .eq(CouponTemplate::getStatus, CouponTemplateStatusEnum.NOT_START) // 未开始的优惠券才可以激活
+                .eq(CouponTemplate::getStatus, NOT_START) // 未开始的优惠券才可以激活
                 .one();
         if (Objects.isNull(template)) {
             return;
         }
         lambdaUpdate().eq(CouponTemplate::getId, couponTemplateId)
                 .eq(CouponTemplate::getShopId, UserContext.getShopId())
-                .set(CouponTemplate::getStatus, CouponTemplateStatusEnum.IN_PROGRESS)
+                .set(CouponTemplate::getStatus, IN_PROGRESS)
                 .update();
     }
 
@@ -100,14 +101,14 @@ public class CouponTemplateServiceImpl extends ServiceImpl<CouponTemplateMapper,
     public void terminateCouponTemplate(Long couponTemplateId) {
         CouponTemplate template = lambdaQuery().eq(CouponTemplate::getId, couponTemplateId)
                 .eq(CouponTemplate::getShopId, UserContext.getShopId())
-                .eq(CouponTemplate::getStatus, CouponTemplateStatusEnum.IN_PROGRESS) // 进行中的优惠券才可以到期结束
+                .eq(CouponTemplate::getStatus, IN_PROGRESS) // 进行中的优惠券才可以到期结束
                 .one();
         if (Objects.isNull(template)) {
             return;
         }
         lambdaUpdate().eq(CouponTemplate::getId, couponTemplateId)
                 .eq(CouponTemplate::getShopId, UserContext.getShopId())
-                .set(CouponTemplate::getStatus, CouponTemplateStatusEnum.END)
+                .set(CouponTemplate::getStatus, END)
                 .update();
     }
 
@@ -115,14 +116,14 @@ public class CouponTemplateServiceImpl extends ServiceImpl<CouponTemplateMapper,
     public void cancelCouponTemplate(Long couponTemplateId) {
         CouponTemplate template = lambdaQuery().eq(CouponTemplate::getId, couponTemplateId)
                 .eq(CouponTemplate::getShopId, UserContext.getShopId())
-                .eq(CouponTemplate::getStatus, CouponTemplateStatusEnum.NOT_START) // 未开始的优惠券才可以取消
+                .eq(CouponTemplate::getStatus, NOT_START) // 未开始的优惠券才可以取消
                 .one();
         if (Objects.isNull(template)) {
             return;
         }
         lambdaUpdate().eq(CouponTemplate::getId, couponTemplateId)
                 .eq(CouponTemplate::getShopId, UserContext.getShopId())
-                .set(CouponTemplate::getStatus, CouponTemplateStatusEnum.CANCELED)
+                .set(CouponTemplate::getStatus, CANCELED)
                 .update();
     }
 
@@ -130,7 +131,7 @@ public class CouponTemplateServiceImpl extends ServiceImpl<CouponTemplateMapper,
     public void increaseNumberCouponTemplate(CouponTemplateNumberReqDTO requestParam) {
         CouponTemplate template = lambdaQuery().eq(CouponTemplate::getId, requestParam.getCouponTemplateId())
                 .eq(CouponTemplate::getShopId, UserContext.getShopId())
-                .in(CouponTemplate::getStatus, CouponTemplateStatusEnum.NOT_START, CouponTemplateStatusEnum.IN_PROGRESS)
+                .in(CouponTemplate::getStatus, NOT_START, IN_PROGRESS)
                 .one();
         if (Objects.isNull(template)) {
             throw new ServiceException("优惠券模板状态异常，暂时无法增加库存....");

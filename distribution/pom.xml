@@ -4,22 +4,17 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.zicca.icoupon</groupId>
-        <artifactId>iCoupon-admin</artifactId>
+        <artifactId>iCoupon-all</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>iCoupon-admin-merchant</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>merchant</name>
-    <description>商家后管模块</description>
+    <artifactId>iCoupon-distribution</artifactId>
+    <name>distribution</name>
+    <description>分发模块</description>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
         <dependency>
@@ -61,18 +56,6 @@
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.xiaoymin</groupId>
-            <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
-        </dependency>
-
-        <!-- Mock 数据相关依赖 -->
-        <dependency>
-            <groupId>com.github.javafaker</groupId>
-            <artifactId>javafaker</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <dependency>

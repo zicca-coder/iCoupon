@@ -47,7 +47,7 @@ public class CouponTemplateGoodsServiceImpl extends ServiceImpl<CouponTemplateGo
     @Override
     public void batchDissociateGoods(Long couponTemplateId) {
         try {
-            boolean deleted = remove(new LambdaQueryWrapper<CouponTemplateGoods>()
+            remove(new LambdaQueryWrapper<CouponTemplateGoods>()
                     .eq(CouponTemplateGoods::getCouponTemplateId, couponTemplateId)
                     .eq(CouponTemplateGoods::getShopId, UserContext.getShopId()));
         } catch (Exception e) {

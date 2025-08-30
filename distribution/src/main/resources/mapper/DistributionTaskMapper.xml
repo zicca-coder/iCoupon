@@ -1,0 +1,15 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zicca.icoupon.distribution.dao.mapper.DistributionTaskMapper">
+
+    <update id="updateStatusById">
+        UPDATE t_distribution_task
+        SET status = #{status}
+        WHERE id = #{id}
+          AND shop_id = #{shopId}
+          AND del_falg = 0
+    </update>
+
+
+</mapper>

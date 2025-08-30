@@ -1,8 +1,8 @@
 server:
-  port: 10001
+  port: 10002
 spring:
   application:
-    name: iCoupon-admin-merchant
+    name: iCoupon-distribution
   datasource:
     url: jdbc:mysql://192.168.17.128:3306/coupon?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
     username: root
@@ -30,24 +30,6 @@ mybatis-plus:
       logic-delete-value: 1
       logic-not-delete-value: 0
 
-springdoc:
-  default-flat-param-object: true
-  swagger-ui:
-    path: /swagger-ui.html
-    tags-sorter: alpha
-    operations-sorter: alpha
-  api-docs:
-    path: /v3/api-docs
-  group-configs:
-    - group: 'default'
-      paths-to-match: '/**'
-      packages-to-scan: com.zicca.icoupon
-
-knife4j:
-  enable: true
-  setting:
-    language:
-
 minio:
   endpoint: http:centos:9001
   accessKey: admin
@@ -57,8 +39,7 @@ minio:
 rocketmq:
   name-server: 192.168.17.128:9876
   producer:
-    group: iCoupon-admin-merchant-producer-group
-    send-message-timeout: 5000 # 发送消息超时时间
-    retry-times-when-send-failed: 5 # 生产者向Broker同步发送消息失败后的重试次数
-    retry-times-when-send-async-failed: 5 # 生产者向Broker异步发送消息失败后的重试次数
-
+    group: iCoupon-distribution-producer-group
+    send-message-timeout: 5000
+    retry-times-when-send-failed: 5
+    retry-times-when-send-async-failed: 5
