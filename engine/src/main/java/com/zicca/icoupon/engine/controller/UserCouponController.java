@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/engine/user-coupon")
+@RequestMapping("/api/v1/engine/user-coupons")
 @Tag(name = "用户优惠券管理", description = "用户优惠券接口管理")
 public class UserCouponController {
 
