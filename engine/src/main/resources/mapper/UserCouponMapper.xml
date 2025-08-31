@@ -1,0 +1,159 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zicca.icoupon.engine.dao.mapper.UserCouponMapper">
+
+    <sql id="column">
+        id,
+        user_id,
+        coupon_template_id,
+        shop_id,
+        target,
+        type,
+        face_value,
+        min_amount,
+        receive_time,
+        use_time,
+        valid_start_time,
+        valid_end_time,
+        status
+    </sql>
+
+    <sql id="allColumns">
+        <include refid="column"/>,
+        create_time,
+        update_time,
+        create_by,
+        update_by,
+        del_flag
+    </sql>
+
+    <sql id="insertValues">
+        #{id},
+        #{userId},
+        #{couponTemplateId},
+        #{shopId},
+        #{target},
+        #{type},
+        #{faceValue},
+        #{minAmount},
+        #{receiveTime},
+        #{useTime},
+        #{validStartTime},
+        #{validEndTime},
+        #{status.code},
+        #{createTime},
+        #{updateTime},
+        #{createBy},
+        #{updateBy},
+        #{delFlag}
+    </sql>
+
+    <sql id="baseCondition">
+        <if test="id != null">
+            AND id = #{id}
+        </if>
+        <if test="userId != null">
+            AND user_id = #{userId}
+        </if>
+        <if test="couponTemplateId != null">
+            AND coupon_template_id = #{couponTemplateId}
+        </if>
+        AND del_flag = 0
+    </sql>
+
+    <sql id="queryCondition">
+        <if test="id != null">
+            AND id = #{condition.id}
+        </if>
+        <if test="userId != null">
+            AND user_id = #{condition.userId}
+        </if>
+        <if test="couponTemplateId != null">
+            AND coupon_template_id = #{condition.couponTemplateId}
+        </if>
+        <if test="shopId != null">
+            AND shop_id = #{condition.shopId}
+        </if>
+        <if test="status != null">
+            AND status = #{condition.status}
+        </if>
+        <if test="target != null">
+            AND target = #{condition.target}
+        </if>
+        <if test="type != null">
+            AND type = #{condition.type}
+        </if>
+        AND del_flag = 0
+    </sql>
+
+    <insert id="insertUserCoupon" parameterType="com.zicca.icoupon.engine.dao.entity.UserCoupon">
+        INSERT INTO t_user_coupon (
+        <include refid="allColumns"/>
+        ) VALUES (
+        <include refid="insertValues"/>
+        )
+    </insert>
+
+    <insert id="batchInsertUserCoupon">
+        INSERT INTO t_user_coupon (
+        <include refid="allColumns"/>
+        ) VALUES
+        <foreach item="item" index="index" collection="userCoupons" separator=",">
+            (
+            <include refid="insertValues"/>
+            )
+        </foreach>
+    </insert>
+
+
+    <select id="selectUserCouponById" resultType="com.zicca.icoupon.engine.dao.entity.UserCoupon">
+        SELECT
+            <include refid="column"/>
+        FROM t_user_coupon
+        WHERE 1=1
+        <include refid="baseCondition"/>
+    </select>
+
+
+    <!-- 查询用户领取指定优惠券模板的数量 -->
+    <select id="selectCountByCouponTemplateIdAndUserId" resultType="int">
+        SELECT COUNT(1)
+        FROM t_user_coupon
+        WHERE 1=1
+        <include refid="baseCondition"/>
+    </select>
+
+    <!-- 查询用户领取指定优惠券模板且未使用的数量 -->
+    <select id="selectUnusedCountByCouponTemplateIdAndUserId" resultType="int">
+        SELECT COUNT(1)
+        FROM t_user_coupon
+        WHERE 1=1
+        <include refid="baseCondition"/>
+        AND status = 0
+    </select>
+
+    <select id="selectUserCouponListByCondition" resultType="com.zicca.icoupon.engine.dao.entity.UserCoupon">
+        SELECT
+            <include refid="column"/>
+        FROM t_user_coupon
+        WHERE 1=1
+        <include refid="queryCondition"/>
+        ORDER BY receive_time DESC
+    </select>
+
+    <select id="selectAvailableUserCouponList" resultType="com.zicca.icoupon.engine.dao.entity.UserCoupon">
+        SELECT
+            <include refid="column"/>
+        FROM t_user_coupon
+        WHERE 1=1
+        <include refid="baseCondition"/>
+        AND status = 0
+        AND valid_start_time <![CDATA[ <= ]]> #{now}
+        AND valid_end_time <![CDATA[ >= ]]> #{now}
+        ORDER BY receive_time DESC
+    </select>
+
+
+
+</mapper>

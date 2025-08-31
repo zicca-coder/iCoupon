@@ -13,6 +13,7 @@
         <module>framework</module>
         <module>admin</module>
         <module>distribution</module>
+        <module>engine</module>
     </modules>
 
     <properties>
