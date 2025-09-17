@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zicca.icoupon.engine.dao.entity.CouponTemplate;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * 优惠券模板 Mapper
  *
@@ -41,6 +43,15 @@ public interface CouponTemplateMapper extends BaseMapper<CouponTemplate> {
      * @return 优惠券模板
      */
     CouponTemplate selectCouponTemplateById(@Param("id") Long couponTemplateId,
-                                         @Param("shopId") Long shopId);
+                                            @Param("shopId") Long shopId);
 
+    /**
+     * 根据优惠券模板 id 列表获取优惠券模板
+     *
+     * @param couponTemplateIds 优惠券模板 id 列表
+     * @param shopIds           店铺 id 列表
+     * @return 优惠券模板列表
+     */
+    List<CouponTemplate> selectCouponTemplateByIds(@Param("couponTemplateIds") List<Long> couponTemplateIds,
+                                                   @Param("shopIds") List<Long> shopIds);
 }

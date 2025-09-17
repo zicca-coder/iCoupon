@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -42,5 +43,14 @@ public class CouponTemplateServiceImpl extends ServiceImpl<CouponTemplateMapper,
                     }
                 })
                 .orElse(null);
+    }
+
+    @Override
+    public List<CouponTemplate> listCouponTemplateByIds(List<Long> couponTemplateIds, List<Long> shopIds) {
+        if (couponTemplateIds == null || couponTemplateIds.isEmpty() || shopIds == null || shopIds.isEmpty()) {
+            log.warn("查询优惠券模板参数不完整: couponTemplateIds={}, shopIds={}", couponTemplateIds, shopIds);
+            return List.of();
+        }
+        return couponTemplateMapper.selectCouponTemplateByIds(couponTemplateIds, shopIds);
     }
 }

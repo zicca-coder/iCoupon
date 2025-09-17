@@ -5,6 +5,8 @@ import com.zicca.icoupon.engine.dao.entity.CouponTemplate;
 import com.zicca.icoupon.engine.dto.req.CouponTemplateQueryReqDTO;
 import com.zicca.icoupon.engine.dto.resp.CouponTemplateQueryRespDTO;
 
+import java.util.List;
+
 /**
  * 优惠券模板服务
  *
@@ -14,12 +16,21 @@ public interface CouponTemplateService extends IService<CouponTemplate> {
 
 
     /**
-     * 获取优惠券模板
+     * 查询优惠券模板
      *
-     * @param requestParam 查询参数
+     * @param id     优惠券模板 id
+     * @param shopId 店铺 id
      * @return 优惠券模板
      */
     CouponTemplateQueryRespDTO getCouponTemplate(Long id, Long shopId);
 
+    /**
+     * 根据优惠券模板ID集合批量查询优惠券信息
+     *
+     * @param couponTemplateIds 优惠券ID集合
+     * @param shopIds           店铺ID集合
+     * @return 优惠券信息
+     */
+    List<CouponTemplate> listCouponTemplateByIds(List<Long> couponTemplateIds, List<Long> shopIds);
 
 }

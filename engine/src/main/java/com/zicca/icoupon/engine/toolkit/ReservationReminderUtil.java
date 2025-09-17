@@ -36,8 +36,7 @@ public class ReservationReminderUtil {
      * 填充预约信息
      */
     public static void fillRemindInformation(ReservationReminderQueryRespDTO resp, Long information) {
-        List<Date> dateList = new ArrayList<>();
-        List<String> remindType = new ArrayList<>();
+        List<ReservationReminderQueryRespDTO.RemindPair> remindPairs = new ArrayList<>();
         Date validStartTime = resp.getValidStartTime();
         for (int i = NEXT_TYPE_BITS - 1; i >= 0; i--) {
             // 按时间节点倒叙遍历，即离开抢时间最久，离现在最近
@@ -46,13 +45,14 @@ public class ReservationReminderUtil {
                 if (((information >> (j * NEXT_TYPE_BITS + i)) & 1) == 1) {
                     // 该时间节点的该提醒类型用户有预约
                     Date date = DateUtil.offsetMinute(validStartTime, -((i + 1) * TIME_INTERVAL));
-                    dateList.add(date);
-                    remindType.add(NotifyTypeEnum.getByCode(j).getDesc());
+                    ReservationReminderQueryRespDTO.RemindPair remindPair = new ReservationReminderQueryRespDTO.RemindPair();
+                    remindPair.setRemindTime(date);
+                    remindPair.setRemindType(NotifyTypeEnum.getByCode(j).getDesc());
+                    remindPairs.add(remindPair);
                 }
             }
         }
-        resp.setRemindTime(dateList);
-        resp.setRemindType(remindType);
+        resp.setRemindPairs(remindPairs);
     }
 
     /**

@@ -6,6 +6,7 @@ import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zicca.icoupon.engine.common.context.UserContext;
+import com.zicca.icoupon.engine.dao.entity.CouponTemplate;
 import com.zicca.icoupon.engine.dao.entity.ReservationReminder;
 import com.zicca.icoupon.engine.dao.mapper.ReservationReminderMapper;
 import com.zicca.icoupon.engine.dto.req.ReservationReminderCancelReqDTO;
@@ -82,6 +83,7 @@ public class ReservationReminderServiceImpl extends ServiceImpl<ReservationRemin
                 .startTime(couponTemplate.getValidStartTime())
                 .delayTime(DateUtil.offsetMinute(couponTemplate.getValidStartTime(), -requestParam.getRemindTime()).getTime())
                 .build();
+        // todo: 如果数据库持久化成功但是RocketMQ延时消息发送失败，则需回滚数据库
         reservationReminderPushProducer.sendMessage(event);
     }
 
@@ -89,12 +91,44 @@ public class ReservationReminderServiceImpl extends ServiceImpl<ReservationRemin
     public List<ReservationReminderQueryRespDTO> listReservationReminder() {
         List<ReservationReminder> reminders = lambdaQuery().eq(ReservationReminder::getUserId, Long.parseLong(UserContext.getUserId()))
                 .list();
+        log.info("查询预约信息：{}", reminders);
         if (CollectionUtil.isEmpty(reminders)) {
             return List.of();
         }
-        return reminders.stream()
-                .map(reminder -> BeanUtil.copyProperties(reminder, ReservationReminderQueryRespDTO.class))
-                .toList();
+
+        // 根据优惠券 ID 查询优惠券信息
+        List<Long> couponTemplateIds = reminders.stream().map(ReservationReminder::getCouponTemplateId).toList();
+        List<Long> shopIds = reminders.stream().map(ReservationReminder::getShopId).toList();
+        List<CouponTemplate> couponTemplates = couponTemplateService.listCouponTemplateByIds(couponTemplateIds, shopIds);
+        List<ReservationReminderQueryRespDTO> result = couponTemplates.stream().map(couponTemplate -> {
+            ReservationReminderQueryRespDTO dto = new ReservationReminderQueryRespDTO();
+            dto.setCouponTemplateId(couponTemplate.getId());
+            dto.setShopId(couponTemplate.getShopId());
+            dto.setName(couponTemplate.getName());
+            dto.setValidStartTime(couponTemplate.getValidStartTime());
+            dto.setValidEndTime(couponTemplate.getValidEndTime());
+            // 根据 couponTemplateId 找到对应的 reminder，并设置其他信息
+            reminders.stream()
+                    .filter(reminder -> reminder.getCouponTemplateId().equals(couponTemplate.getId()))
+                    .findFirst()
+                    .ifPresent(reminder -> {
+                        ReservationReminderUtil.fillRemindInformation(dto, reminder.getInformation());
+                    });
+            return dto;
+        }).toList();
+        log.info(result.toString());
+
+        // 填充响应结果的其他信息
+        result.forEach(each -> {
+            reminders.stream()
+                    .filter(reminder -> reminder.getCouponTemplateId().equals(each.getCouponTemplateId()))
+                    .findFirst()
+                    .ifPresent(reminder -> {
+                        ReservationReminderUtil.fillRemindInformation(each, reminder.getInformation());
+                    });
+        });
+        log.info(result.toString());
+        return result;
     }
 
     @Override
