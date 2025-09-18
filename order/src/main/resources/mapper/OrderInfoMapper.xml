@@ -1,0 +1,344 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zicca.icoupon.order.dao.mapper.OrderInfoMapper">
+
+    <sql id="talbe">
+        t_order_info
+    </sql>
+
+    <sql id="baseColumn">
+        id
+        ,
+        order_no,
+        user_id,
+        shop_id,
+        total_amount,
+        discount_amount,
+        pay_amount,
+        status,
+        pay_time,
+        cancel_time
+    </sql>
+
+    <sql id="column">
+        <include refid="baseColumn"/>,
+        create_time,
+        update_time,
+        create_by,
+        update_by,
+        del_flag
+    </sql>
+
+    <sql id="insertValues">
+        #{id}
+        ,
+        #{orderNo},
+        #{userId},
+        #{shopId},
+        #{totalAmount},
+        #{discountAmount},
+        #{payAmount},
+        #{status.code},
+        #{payTime},
+        #{cancelTime},
+        #{createTime},
+        #{updateTime},
+        #{createBy},
+        #{updateBy},
+        #{delFlag}
+    </sql>
+
+    <sql id="updateSet">
+        <set>
+            <if test="orderNo != null">
+                order_no = #{orderInfo.orderNo},
+            </if>
+            <if test="userId != null">
+                user_id = #{orderInfo.userId},
+            </if>
+            <if test="shopId != null">
+                shop_id = #{orderInfo.shopId},
+            </if>
+            <if test="totalAmount != null">
+                total_amount = #{orderInfo.totalAmount},
+            </if>
+            <if test="discountAmount != null">
+                discount_amount = #{orderInfo.discountAmount},
+            </if>
+            <if test="payAmount != null">
+                pay_amount = #{orderInfo.payAmount},
+            </if>
+            <if test="status != null">
+                status = #{orderInfo.status.code},
+            </if>
+            <if test="payTime != null">
+                pay_time = #{orderInfo.payTime},
+            </if>
+            <if test="cancelTime != null">
+                cancel_time = #{orderInfo.cancelTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{orderInfo.updateTime},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{orderInfo.updateBy},
+            </if>
+            <if test="delFlag != null">
+                del_flag = #{orderInfo.delFlag},
+            </if>
+        </set>
+    </sql>
+
+    <sql id="baseCondition">
+        <if test="id != null">
+            AND id = #{id}
+        </if>
+        <if test="orderNo != null">
+            AND order_no = #{orderNo}
+        </if>
+        <if test="userId != null">
+            AND user_id = #{userId}
+        </if>
+        <if test="status != null">
+            AND status = #{status}
+        </if>
+        AND del_flag = 0
+    </sql>
+
+    <select id="selectOrderInfoById" resultType="com.zicca.icoupon.order.dao.entity.OrderInfo">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="talbe"/>
+        WHERE 1=1
+        <include refid="baseCondition"/>
+    </select>
+
+    <select id="selectOrderInfoByOrderNo" resultType="com.zicca.icoupon.order.dao.entity.OrderInfo">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="talbe"/>
+        WHERE 1=1
+        AND order_no = #{orderNo}
+        AND del_flag = 0
+    </select>
+
+    <select id="selectOrderInfoByUserIdAndOrderNo" resultType="com.zicca.icoupon.order.dao.entity.OrderInfo">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="talbe"/>
+        WHERE 1=1
+        AND user_id = #{userId}
+        AND order_no = #{orderNo}
+        AND del_flag = 0
+    </select>
+
+    <select id="selectOrderInfoByIdAndUserId" resultType="com.zicca.icoupon.order.dao.entity.OrderInfo">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="talbe"/>
+        WHERE 1=1
+        AND id = #{id}
+        AND user_id = #{userId}
+        AND del_flag = 0
+    </select>
+
+    <select id="selectOrderInfoListByIds" resultType="com.zicca.icoupon.order.dao.entity.OrderInfo">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="talbe"/>
+        WHERE 1=1
+        AND id IN
+        <foreach collection="ids" item="id" index="index" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+        AND del_flag = 0
+    </select>
+
+    <select id="selectOrderInfoListByIdsAndUserId" resultType="com.zicca.icoupon.order.dao.entity.OrderInfo">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="talbe"/>
+        WHERE 1=1
+        AND id IN
+        <foreach collection="ids" item="id" index="index" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+        AND user_id = #{userId}
+        AND del_flag = 0
+    </select>
+
+    <select id="selectOrderInfoListByUserId" resultType="com.zicca.icoupon.order.dao.entity.OrderInfo">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="talbe"/>
+        WHERE 1=1
+        AND user_id = #{userId}
+        AND del_flag = 0
+    </select>
+
+    <select id="selectOrderInfoListByUserIdAndStatus" resultType="com.zicca.icoupon.order.dao.entity.OrderInfo">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="talbe"/>
+        WHERE 1=1
+        AND user_id = #{userId}
+        AND status = #{status.code}
+        AND del_flag = 0
+    </select>
+
+    <select id="selectCountByUserIdAndStatus" resultType="com.zicca.icoupon.order.dao.entity.OrderInfo">
+        SELECT
+        COUNT(1)
+        FROM
+        <include refid="talbe"/>
+        WHERE 1=1
+        AND user_id = #{userId}
+        AND status = #{status.code}
+        AND del_flag = 0
+    </select>
+
+    <insert id="insertOrderInfo" parameterType="com.zicca.icoupon.order.dao.entity.OrderInfo">
+        INSERT INTO
+        <include refid="talbe"/>
+        (
+        <include refid="column"/>
+        ) VALUES (
+        <include refid="insertValues"/>
+        )
+    </insert>
+
+    <update id="updateOrderInfoById">
+        UPDATE
+        <include refid="talbe"/>
+        <include refid="updateSet"/>
+        WHERE 1=1
+        AND id = #{id}
+        AND del_flag = 0
+    </update>
+
+    <update id="updateOrderInfoByOrderNo">
+        UPDATE
+        <include refid="talbe"/>
+        <include refid="updateSet"/>
+        WHERE 1=1
+        AND order_no = #{orderNo}
+        AND del_flag = 0
+    </update>
+
+
+    <update id="updateOrderInfoByUserIdAndOrderNo">
+        UPDATE
+        <include refid="talbe"/>
+        <include refid="updateSet"/>
+        WHERE 1=1
+        AND user_id = #{userId}
+        AND order_no = #{orderNo}
+        AND del_flag = 0
+    </update>
+
+    <update id="updateOrderInfoByIdAndUserId">
+        UPDATE
+        <include refid="talbe"/>
+        <include refid="updateSet"/>
+        WHERE 1=1
+        AND id = #{id}
+        AND user_id = #{userId}
+        AND del_flag = 0
+    </update>
+
+    <delete id="deleteOrderInfoById">
+        DELETE
+        FROM
+        <include refid="talbe"/>
+        WHERE 1=1
+        AND id = #{id}
+        AND del_flag = 0
+    </delete>
+
+    <delete id="deleteOrderInfoByOrderNo">
+        DELETE
+        FROM
+        <include refid="talbe"/>
+        WHERE 1=1
+        AND order_no = #{orderNo}
+        AND del_flag = 0
+    </delete>
+
+    <delete id="deleteOrderInfoByIdAndUserId">
+        DELETE
+        FROM
+        <include refid="talbe"/>
+        WHERE 1=1
+        AND id = #{id}
+        AND user_id = #{userId}
+        AND del_flag = 0
+    </delete>
+
+    <delete id="deleteOrderInfoByIds">
+        DELETE
+        FROM
+        <include refid="talbe"/>
+        WHERE 1=1
+        AND id IN
+        <foreach collection="ids" index="index" separator="," open="(" close=")" item="id">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteOrderInfoByIdsAndUserId">
+        DELETE
+        FROM
+        <include refid="talbe"/>
+        WHERE 1=1
+        AND user_id = #{userId}
+        AND id IN
+        <foreach collection="ids" index="index" separator="," open="(" close=")" item="id">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateStatusById">
+        UPDATE
+        <include refid="talbe"/>
+        <set>
+            status = #{status.code}
+        </set>
+        WHERE 1=1
+        AND id = #{id}
+        AND del_flag = 0
+    </update>
+
+    <update id="updateStatusByOrderNo">
+        UPDATE
+        <include refid="talbe"/>
+        <set>
+            status = #{status.code}
+        </set>
+        WHERE 1=1
+        AND order_no = #{orderNo}
+        AND del_flag = 0
+    </update>
+
+    <update id="updateStatusByIdAndUserId">
+        UPDATE
+        <include refid="talbe"/>
+        <set>
+            status = #{status.code}
+        </set>
+        WHERE 1=1
+        AND id = #{id}
+        AND user_id = #{userId}
+        AND del_flag = 0
+    </update>
+
+
+</mapper>

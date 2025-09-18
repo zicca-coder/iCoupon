@@ -5,10 +5,9 @@
     <parent>
         <groupId>com.zicca.icoupon</groupId>
         <artifactId>iCoupon-all</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>iCoupon-framework</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <name>framework</name>
     <description>基础组件</description>
 

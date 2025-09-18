@@ -1,5 +1,6 @@
 package com.zicca.icoupon.engine.controller;
 
+import com.zicca.icoupon.engine.dto.req.SupportedGoodsReqDTO;
 import com.zicca.icoupon.engine.dto.resp.CouponTemplateQueryRespDTO;
 import com.zicca.icoupon.engine.service.CouponTemplateService;
 import com.zicca.icoupon.framework.result.Result;
@@ -10,10 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 优惠券模板控制层
@@ -38,5 +36,18 @@ public class CouponTemplateController {
                                                                     @PathVariable("shopId") Long shopId) {
         return Results.success(couponTemplateService.getCouponTemplate(id, shopId));
     }
+
+
+    @PostMapping("/support-goods")
+    @Operation(summary = "查询优惠券是否支持该商品", description = "查询优惠券是否支持该商品")
+    @ApiResponse(
+            responseCode = "200",
+            description = "查询优惠券是否支持该商品",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))
+    )
+    public Result<Boolean> isSupportGoods(@RequestBody SupportedGoodsReqDTO requestParam) {
+        return Results.success(couponTemplateService.isSupportGoods(requestParam));
+    }
+
 
 }

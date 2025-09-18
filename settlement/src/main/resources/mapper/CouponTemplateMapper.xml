@@ -1,0 +1,78 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zicca.icoupon.settlement.dao.mapper.CouponTemplateMapper">
+
+    <sql id ="column">
+        id,
+        name,
+        shop_id,
+        target,
+        type,
+        face_value,
+        min_amount,
+        max_discount_amount,
+        max_random_amount,
+        stock,
+        valid_start_time,
+        valid_end_time,
+        max_receive_per_user,
+        status
+    </sql>
+
+    <sql id="baseCondition">
+        <if test="id != null">
+            AND id = #{id}
+        </if>
+        <if test="shopId != null">
+            AND shop_id = #{shopId}
+        </if>
+        AND del_flag = 0
+    </sql>
+
+
+    <!--增加优惠券模板发行量-->
+    <update id="increaseNumberCouponTemplate">
+        UPDATE t_coupon_template
+        SET stock = stock + #{number}
+        WHERE id = #{couponTemplateId}
+          AND shop_id = #{shopId}
+    </update>
+
+    <!--减少优惠券模板发行量-->
+    <update id="decreaseNumberCouponTemplate">
+        UPDATE t_coupon_template
+        SET stock = stock - #{number}
+        WHERE id = #{couponTemplateId}
+          AND shop_id = #{shopId}
+          AND stock >= #{number}
+    </update>
+
+    <select id="selectCouponTemplateById" resultType="com.zicca.icoupon.settlement.dao.entity.CouponTemplate">
+        SELECT
+            <include refid="column"/>
+        FROM t_coupon_template
+        WHERE 1=1
+        <include refid="baseCondition"/>
+    </select>
+
+    <select id="selectCouponTemplateByIds" resultType="com.zicca.icoupon.settlement.dao.entity.CouponTemplate">
+        SELECT
+            <include refid="column"/>
+        FROM t_coupon_template
+        WHERE 1=1
+        AND id IN
+        <foreach item="item" index="index" collection="couponTemplateIds" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        AND shop_id IN
+        <foreach item="item" index="index" collection="shopIds" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        AND del_flag = 0
+    </select>
+
+
+
+
+</mapper>

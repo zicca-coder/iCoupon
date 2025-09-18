@@ -81,4 +81,24 @@ public interface UserCouponMapper extends BaseMapper<UserCoupon> {
 
     List<UserCoupon> selectAvailableUserCouponList(@Param("userId") Long userId);
 
+    /**
+     * 更新用户优惠券状态
+     *
+     * @param id     主键 ID
+     * @param userId 用户 ID
+     * @param status 状态
+     * @return 更新数量
+     */
+    int updateStatusByIdAndUserId(@Param("id") Long id, @Param("userId") Long userId, @Param("status") UserCouponStatusEnum status);
+
+    /**
+     * 批量更新用户优惠券状态
+     *
+     * @param ids    主键 ID 列表
+     * @param userId 用户 ID
+     * @param status 状态
+     * @return 更新数量
+     */
+    int updateStatusByIdsAndUserId(@Param("ids") List<Long> ids, @Param("userId") Long userId, @Param("status") UserCouponStatusEnum status);
+
 }

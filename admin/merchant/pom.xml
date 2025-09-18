@@ -5,10 +5,9 @@
     <parent>
         <groupId>com.zicca.icoupon</groupId>
         <artifactId>iCoupon-admin</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>iCoupon-admin-merchant</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <name>merchant</name>
     <description>商家后管模块</description>
     <dependencies>

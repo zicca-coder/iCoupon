@@ -3,6 +3,7 @@ package com.zicca.icoupon.engine.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zicca.icoupon.engine.dao.entity.CouponTemplate;
 import com.zicca.icoupon.engine.dto.req.CouponTemplateQueryReqDTO;
+import com.zicca.icoupon.engine.dto.req.SupportedGoodsReqDTO;
 import com.zicca.icoupon.engine.dto.resp.CouponTemplateQueryRespDTO;
 
 import java.util.List;
@@ -32,5 +33,14 @@ public interface CouponTemplateService extends IService<CouponTemplate> {
      * @return 优惠券信息
      */
     List<CouponTemplate> listCouponTemplateByIds(List<Long> couponTemplateIds, List<Long> shopIds);
+
+
+    /**
+     * 查询优惠券是否支持该商品
+     *
+     * @param requestParam 请求参数
+     * @return 是否支持
+     */
+    Boolean isSupportGoods(SupportedGoodsReqDTO requestParam);
 
 }

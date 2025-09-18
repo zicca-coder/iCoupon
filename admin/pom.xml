@@ -5,10 +5,9 @@
     <parent>
         <groupId>com.zicca.icoupon</groupId>
         <artifactId>iCoupon-all</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>iCoupon-admin</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <name>admin</name>
     <description>后管模块</description>
     <packaging>pom</packaging>

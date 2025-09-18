@@ -109,10 +109,12 @@
 
     <select id="selectUserCouponById" resultType="com.zicca.icoupon.engine.dao.entity.UserCoupon">
         SELECT
-            <include refid="column"/>
+        <include refid="column"/>
         FROM t_user_coupon
         WHERE 1=1
-        <include refid="baseCondition"/>
+        AND id = #{id}
+        AND user_id = #{userId}
+        AND del_flag = 0
     </select>
 
 
@@ -154,6 +156,29 @@
         ORDER BY receive_time DESC
     </select>
 
+
+    <update id="updateStatusByIdAndUserId">
+        UPDATE
+        t_user_coupon
+        SET status = #{status.code}
+        WHERE 1=1
+        AND id = #{id}
+        AND user_id = #{userId}
+        AND del_flag = 0
+    </update>
+
+    <update id="updateStatusByIdsAndUserId">
+        UPDATE
+        t_user_coupon
+        SET status = #{status.code}
+        WHERE 1=1
+        AND id IN
+        <foreach item="id" index="index" collection="ids" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+        AND user_id = #{userId}
+        AND del_flag = 0
+    </update>
 
 
 </mapper>

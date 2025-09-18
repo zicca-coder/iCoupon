@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zicca.icoupon.engine.dao.entity.CouponTemplate;
 import com.zicca.icoupon.engine.dao.mapper.CouponTemplateMapper;
 import com.zicca.icoupon.engine.dto.req.CouponTemplateQueryReqDTO;
+import com.zicca.icoupon.engine.dto.req.SupportedGoodsReqDTO;
 import com.zicca.icoupon.engine.dto.resp.CouponTemplateQueryRespDTO;
 import com.zicca.icoupon.engine.service.CouponTemplateService;
 import lombok.RequiredArgsConstructor;
@@ -52,5 +53,11 @@ public class CouponTemplateServiceImpl extends ServiceImpl<CouponTemplateMapper,
             return List.of();
         }
         return couponTemplateMapper.selectCouponTemplateByIds(couponTemplateIds, shopIds);
+    }
+
+    @Override
+    public Boolean isSupportGoods(SupportedGoodsReqDTO requestParam) {
+        // 默认实现
+        return Boolean.TRUE;
     }
 }

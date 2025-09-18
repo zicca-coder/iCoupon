@@ -1,5 +1,6 @@
 package com.zicca.icoupon.engine.controller;
 
+import com.zicca.icoupon.engine.dto.req.UserCouponBathLockReqDTO;
 import com.zicca.icoupon.engine.dto.req.UserCouponReceiveReqDTO;
 import com.zicca.icoupon.engine.dto.resp.UserCouponQueryRespDTO;
 import com.zicca.icoupon.engine.service.UserCouponService;
@@ -47,6 +48,25 @@ public class UserCouponController {
     )
     public Result<UserCouponQueryRespDTO> getUserCouponById(@PathVariable("id") Long id, @PathVariable("userId") Long userId){
         return Results.success(userCouponService.getUserCouponById(id, userId));
+    }
+
+
+    @PutMapping("/batch/{id}/{userId}")
+    @Operation(summary = "锁定用户优惠券", description = "锁定用户优惠券")
+    @ApiResponse(
+            responseCode = "200", description = "锁定用户优惠券成功",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))
+    )
+    public Result<Void> lockUserCoupon(@PathVariable("id") Long id, @PathVariable("userId") Long userId) {
+        userCouponService.lockUserCoupon(id, userId);
+        return Results.success();
+    }
+
+
+    @PutMapping("/batch-lock")
+    public Result<Void> batchLockUserCoupon(@RequestBody UserCouponBathLockReqDTO requestParam) {
+        userCouponService.batchLockUserCoupon(requestParam);
+        return Results.success();
     }
 
 

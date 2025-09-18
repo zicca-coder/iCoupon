@@ -2,6 +2,7 @@ package com.zicca.icoupon.engine.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zicca.icoupon.engine.dao.entity.UserCoupon;
+import com.zicca.icoupon.engine.dto.req.UserCouponBathLockReqDTO;
 import com.zicca.icoupon.engine.dto.req.UserCouponQueryReqDTO;
 import com.zicca.icoupon.engine.dto.req.UserCouponReceiveReqDTO;
 import com.zicca.icoupon.engine.dto.resp.UserCouponQueryRespDTO;
@@ -56,5 +57,17 @@ public interface UserCouponService extends IService<UserCoupon> {
      * @return 可用优惠券列表
      */
     List<UserCouponQueryRespDTO> getAvailableUserCouponList(Long userId);
+
+    /**
+     * 锁定用户优惠券
+     *
+     * @param id     用户优惠券 ID
+     * @param userId 用户 ID
+     */
+    void lockUserCoupon(Long id, Long userId);
+
+
+    void batchLockUserCoupon(UserCouponBathLockReqDTO requestParam);
+
 
 }

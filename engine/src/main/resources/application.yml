@@ -42,8 +42,10 @@ spring:
     nacos:
       discovery:
         server-addr: 192.168.17.128:8848
-        namespace: public
+        namespace: 3a7a5fd9-816a-4f3d-ae91-38c4efe1c04e
         group: DEFAULT_GROUP
+        cluster-name: default
+        register-enabled: true
 
 mybatis-plus:
   configuration:

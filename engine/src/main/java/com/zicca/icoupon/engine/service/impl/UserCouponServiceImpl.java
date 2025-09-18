@@ -3,10 +3,12 @@ package com.zicca.icoupon.engine.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zicca.icoupon.engine.common.enums.UserCouponStatusEnum;
 import com.zicca.icoupon.engine.dao.entity.CouponTemplate;
 import com.zicca.icoupon.engine.dao.entity.UserCoupon;
 import com.zicca.icoupon.engine.dao.mapper.CouponTemplateMapper;
 import com.zicca.icoupon.engine.dao.mapper.UserCouponMapper;
+import com.zicca.icoupon.engine.dto.req.UserCouponBathLockReqDTO;
 import com.zicca.icoupon.engine.dto.req.UserCouponQueryReqDTO;
 import com.zicca.icoupon.engine.dto.req.UserCouponReceiveReqDTO;
 import com.zicca.icoupon.engine.dto.resp.UserCouponQueryRespDTO;
@@ -19,8 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import static com.zicca.icoupon.engine.common.enums.CouponTemplateStatusEnum.IN_PROGRESS;
+import static com.zicca.icoupon.engine.common.enums.UserCouponStatusEnum.LOCKED;
 import static com.zicca.icoupon.engine.common.enums.UserCouponStatusEnum.NOT_USED;
 
 /**
@@ -184,4 +188,36 @@ public class UserCouponServiceImpl extends ServiceImpl<UserCouponMapper, UserCou
                 .map(userCoupon -> BeanUtil.copyProperties(userCoupon, UserCouponQueryRespDTO.class))
                 .toList();
     }
+
+    @Override
+    public void lockUserCoupon(Long id, Long userId) {
+        if (id == null || userId == null) {
+            log.warn("[用户优惠券服务] 锁定用户优惠券 - 参数错误, id: {}, userId: {}", id, userId);
+            throw new ServiceException("参数错误");
+        }
+        try {
+            int result = userCouponMapper.updateStatusById(id, userId, LOCKED);
+        } catch (Exception e) {
+            log.error("[用户优惠券服务] 锁定用户优惠券 - 锁定失败, id: {}, userId: {}", id, userId);
+            throw new ServiceException("锁定失败");
+        }
+
+    }
+
+    @Override
+    public void batchLockUserCoupon(UserCouponBathLockReqDTO requestParam) {
+        if (Objects.isNull(requestParam) || CollectionUtil.isEmpty(requestParam.getUserCouponIds()) || requestParam.getUserId() == null) {
+            log.warn("[用户优惠券服务] 批量锁定用户优惠券 - 参数错误, requestParam: {}", requestParam);
+            throw new ServiceException("参数错误");
+        }
+        try {
+            int result = userCouponMapper.updateStatusByIdsAndUserId(requestParam.getUserCouponIds(), requestParam.getUserId(), LOCKED);
+            log.info("[用户优惠券服务] 批量锁定用户优惠券 - 锁定成功, requestParam: {}", requestParam);
+        } catch (Exception e) {
+            log.error("[用户优惠券服务] 批量锁定用户优惠券 - 锁定失败, requestParam: {}", requestParam);
+            throw new ServiceException("锁定失败");
+        }
+    }
+
+
 }
