@@ -42,6 +42,15 @@ public interface UserCouponMapper extends BaseMapper<UserCoupon> {
     UserCoupon selectUserCouponById(@Param("id") Long id, @Param("userId") Long userId);
 
     /**
+     * 批量查询用户优惠券
+     *
+     * @param ids    主键 ID 列表
+     * @param userId 用户 ID
+     * @return 用户优惠券列表
+     */
+    List<UserCoupon> selectUserCouponByIdsAndUserId(@Param("ids") List<Long> ids, @Param("userId") Long userId);
+
+    /**
      * 更新用户优惠券状态
      *
      * @param id     主键 ID
@@ -71,14 +80,22 @@ public interface UserCouponMapper extends BaseMapper<UserCoupon> {
     int selectUnusedCountByCouponTemplateIdAndUserId(@Param("couponTemplateId") Long couponTemplateId,
                                                      @Param("userId") Long userId);
 
+
     /**
-     * 根据条件查询用户优惠券列表
+     * 根据状态查询用户优惠券列表
      *
-     * @param condition 条件
+     * @param userId 用户 ID
+     * @param status 状态
      * @return 用户优惠券列表
      */
-    List<UserCoupon> selectUserCouponListByCondition(@Param("condition") UserCouponQueryReqDTO condition);
+    List<UserCoupon> selectUserCouponListByStatus(@Param("userId") Long userId, @Param("status") UserCouponStatusEnum status);
 
+    /**
+     * 查询用户可用优惠券列表
+     *
+     * @param userId 用户 ID
+     * @return 用户可用优惠券列表
+     */
     List<UserCoupon> selectAvailableUserCouponList(@Param("userId") Long userId);
 
     /**

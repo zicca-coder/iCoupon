@@ -117,6 +117,20 @@
         AND del_flag = 0
     </select>
 
+    <select id="selectUserCouponByIdsAndUserId" resultType="com.zicca.icoupon.engine.dao.entity.UserCoupon">
+        SELECT
+        <include refid="column"/>
+        FROM t_user_coupon
+        WHERE 1=1
+        AND id IN
+        <foreach item="id" index="index" collection="ids" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+        AND user_id = #{userId}
+        AND status = 0
+        AND del_flag = 0
+    </select>
+
 
     <!-- 查询用户领取指定优惠券模板的数量 -->
     <select id="selectCountByCouponTemplateIdAndUserId" resultType="int">
@@ -135,12 +149,16 @@
         AND status = 0
     </select>
 
-    <select id="selectUserCouponListByCondition" resultType="com.zicca.icoupon.engine.dao.entity.UserCoupon">
+    <select id="selectUserCouponListByStatus" resultType="com.zicca.icoupon.engine.dao.entity.UserCoupon">
         SELECT
             <include refid="column"/>
         FROM t_user_coupon
         WHERE 1=1
-        <include refid="queryCondition"/>
+        AND user_id = #{userId}
+        <if test="status != null">
+            AND status = #{status.code}
+        </if>
+        AND del_flag = 0
         ORDER BY receive_time DESC
     </select>
 
@@ -149,7 +167,7 @@
             <include refid="column"/>
         FROM t_user_coupon
         WHERE 1=1
-        <include refid="baseCondition"/>
+        AND user_id = #{userId}
         AND status = 0
         AND valid_start_time <![CDATA[ <= ]]> #{now}
         AND valid_end_time <![CDATA[ >= ]]> #{now}

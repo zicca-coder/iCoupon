@@ -9,6 +9,7 @@ import com.zicca.icoupon.engine.dao.entity.UserCoupon;
 import com.zicca.icoupon.engine.dao.mapper.CouponTemplateMapper;
 import com.zicca.icoupon.engine.dao.mapper.UserCouponMapper;
 import com.zicca.icoupon.engine.dto.req.UserCouponBathLockReqDTO;
+import com.zicca.icoupon.engine.dto.req.UserCouponListReqDTO;
 import com.zicca.icoupon.engine.dto.req.UserCouponQueryReqDTO;
 import com.zicca.icoupon.engine.dto.req.UserCouponReceiveReqDTO;
 import com.zicca.icoupon.engine.dto.resp.UserCouponQueryRespDTO;
@@ -124,48 +125,30 @@ public class UserCouponServiceImpl extends ServiceImpl<UserCouponMapper, UserCou
     }
 
     @Override
-    public List<UserCouponQueryRespDTO> getUserCouponList(UserCouponQueryReqDTO requestParam) {
-        // 参数校验
-        if (requestParam == null) {
-            log.warn("[用户优惠券服务] 查询用户优惠券列表 - 请求参数为空");
+    public List<UserCouponQueryRespDTO> getUserCouponList(UserCouponListReqDTO requestParam) {
+        if (requestParam == null || requestParam.getUserId() == null) {
+            log.warn("[用户优惠券服务] 获取用户优惠券列表 - 请求参数不完整, userId: {}", requestParam.getUserId());
             return List.of();
         }
-
-        // 查询用户优惠券列表
-        List<UserCoupon> userCoupons = userCouponMapper.selectUserCouponListByCondition(requestParam);
-
-        // 如果查询结果为空，返回空列表
+        if (CollectionUtil.isEmpty(requestParam.getUserCouponIds())) {
+            log.warn("[用户优惠券服务] 获取用户优惠券列表 - 优惠券ID列表为空, userId: {}", requestParam.getUserId());
+            return List.of();
+        }
+        List<UserCoupon> userCoupons = userCouponMapper.selectUserCouponByIdsAndUserId(requestParam.getUserCouponIds(), requestParam.getUserId());
         if (CollectionUtil.isEmpty(userCoupons)) {
+            log.warn("[用户优惠券服务] 获取用户优惠券列表 - 优惠券不存在, userId: {}", requestParam.getUserId());
             return List.of();
         }
-
-        // 转换为响应DTO列表
         return userCoupons.stream()
                 .map(userCoupon -> BeanUtil.copyProperties(userCoupon, UserCouponQueryRespDTO.class))
                 .toList();
     }
 
     @Override
-    public List<UserCouponQueryRespDTO> getUserCouponListByStatus(UserCouponQueryReqDTO requestParam) {
-        // 参数校验
-        if (requestParam == null) {
-            log.warn("[用户优惠券服务] 查询用户优惠券列表 - 请求参数为空");
-            return List.of();
-        }
-
-        // 查询用户优惠券列表
-        List<UserCoupon> userCoupons = userCouponMapper.selectUserCouponListByCondition(requestParam);
-
-        // 如果查询结果为空，返回空列表
-        if (CollectionUtil.isEmpty(userCoupons)) {
-            return List.of();
-        }
-
-        // 转换为响应DTO列表
-        return userCoupons.stream()
-                .map(userCoupon -> BeanUtil.copyProperties(userCoupon, UserCouponQueryRespDTO.class))
-                .toList();
+    public List<UserCouponQueryRespDTO> getUserCouponListByStatus(Long userId, UserCouponStatusEnum status) {
+        return List.of();
     }
+
 
     @Override
     public List<UserCouponQueryRespDTO> getAvailableUserCouponList(Long userId) {

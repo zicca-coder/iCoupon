@@ -19,13 +19,12 @@ import java.util.Arrays;
  */
 public enum DiscountTypeEnum implements IEnum<Integer> {
 
-    @Order(0)
     LITTLE_REDUCTION(0, "立减券"),
-    @Order(1)
+
     DISCOUNT(1, "折扣券"),
-    @Order(2)
+
     FULL_REDUCTION(2, "满减券"),
-    @Order(3)
+
     RANDOM(3, "随机券"),
     ;
     @EnumValue

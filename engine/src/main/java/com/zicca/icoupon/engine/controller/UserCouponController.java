@@ -1,6 +1,7 @@
 package com.zicca.icoupon.engine.controller;
 
 import com.zicca.icoupon.engine.dto.req.UserCouponBathLockReqDTO;
+import com.zicca.icoupon.engine.dto.req.UserCouponListReqDTO;
 import com.zicca.icoupon.engine.dto.req.UserCouponReceiveReqDTO;
 import com.zicca.icoupon.engine.dto.resp.UserCouponQueryRespDTO;
 import com.zicca.icoupon.engine.service.UserCouponService;
@@ -13,6 +14,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 用户优惠券控制层
@@ -69,5 +72,26 @@ public class UserCouponController {
         return Results.success();
     }
 
+
+    @PostMapping("/batch")
+    @Operation(summary = "批量查询用户优惠券", description = "批量查询用户优惠券")
+    @ApiResponse(
+            responseCode = "200", description = "批量查询用户优惠券成功",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserCouponQueryRespDTO.class))
+    )
+    public Result<List<UserCouponQueryRespDTO>> batchGetUserCouponList(@RequestBody UserCouponListReqDTO requestParam) {
+        return Results.success(userCouponService.getUserCouponList(requestParam));
+    }
+
+
+    @GetMapping("/available/{userId}")
+    @Operation(summary = "查询用户可用优惠券", description = "查询用户可用优惠券")
+    @ApiResponse(
+            responseCode = "200", description = "查询用户可用优惠券成功",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserCouponQueryRespDTO.class))
+    )
+    public Result<List<UserCouponQueryRespDTO>> getAvailableUserCouponList(@PathVariable("userId") Long userId) {
+        return Results.success(userCouponService.getAvailableUserCouponList(userId));
+    }
 
 }

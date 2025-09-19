@@ -1,5 +1,6 @@
 package com.zicca.icoupon.settlement.service;
 
+import com.zicca.icoupon.settlement.dto.req.UserCouponListReqDTO;
 import com.zicca.icoupon.settlement.dto.req.UserCouponQueryReqDTO;
 import com.zicca.icoupon.settlement.dto.resp.UserCouponQueryRespDTO;
 
@@ -28,6 +29,15 @@ public interface UserCouponService {
      * @return 优惠券列表
      */
     List<UserCouponQueryRespDTO> getUserCouponList(UserCouponQueryReqDTO requestParam);
+
+
+    /**
+     * 批量查询用户优惠券列表
+     *
+     * @param requestParam 查询参数
+     * @return 优惠券列表
+     */
+    List<UserCouponQueryRespDTO> getUserCouponList(List<Long> userCouponIds, Long userId);
 
     /**
      * 根据状态查询用户优惠券列表

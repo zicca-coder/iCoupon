@@ -52,7 +52,7 @@ public class OrderCalculateServiceImpl implements OrderCalculateService {
         });
         // 目前暂定一个商品项只能用一张优惠券
         discountItems.forEach(item -> {
-            PricePair pricePair = orderItemCalculateService.calculateWithSingleCoupon(item);
+            PricePair pricePair = orderItemCalculateService.calculateItemWithSingleCoupon(item);
             if (pricePair.isDiscount()) {
                 // 由于目前暂定一个商品项只能用一张优惠券，所以默认优惠券列表中只有一张优惠券，因此直接添加即可
                 itemCouponMap.put(item.getGoodsId(), item.getUserCouponIds());

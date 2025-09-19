@@ -6,9 +6,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
- * 优惠券计算参数 | 单个商品项 + 单张优惠券
+ * 优惠券计算参数 | 单个商品项 + 多张优惠券
  *
  * @author zicca
  */
@@ -16,7 +17,7 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CouponCalculatePair {
+public class CalculateOverlayParam {
 
     /**
      * 商品 ID
@@ -26,7 +27,7 @@ public class CouponCalculatePair {
     /**
      * 用户优惠券 ID
      */
-    private Long userCouponId;
+    private List<Long> userCouponIds;
 
     /**
      * 用户 ID
