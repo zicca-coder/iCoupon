@@ -2,7 +2,7 @@ package com.zicca.icoupon.settlement.service.impl;
 
 import com.zicca.icoupon.framework.exception.RemoteException;
 import com.zicca.icoupon.framework.result.Result;
-import com.zicca.icoupon.settlement.api.EngineServiceApi;
+import com.zicca.icoupon.settlement.api.CouponServiceApi;
 import com.zicca.icoupon.settlement.dto.req.UserCouponListReqDTO;
 import com.zicca.icoupon.settlement.dto.req.UserCouponQueryReqDTO;
 import com.zicca.icoupon.settlement.dto.resp.UserCouponQueryRespDTO;
@@ -23,12 +23,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserCouponServiceImpl implements UserCouponService {
 
-    private final EngineServiceApi engineServiceApi;
+    private final CouponServiceApi couponServiceApi;
 
     @Override
     public UserCouponQueryRespDTO getUserCouponById(Long id, Long userId) {
         try {
-            Result<UserCouponQueryRespDTO> result = engineServiceApi.getUserCouponById(id, userId);
+            Result<UserCouponQueryRespDTO> result = couponServiceApi.getUserCouponById(id, userId);
             if (result == null) {
                 log.error("[结算服务] | 远程调用引擎服务返回空结果，id: {}, userId: {}", id, userId);
                 throw new RemoteException("引擎服务调用返回空结果");
@@ -56,7 +56,7 @@ public class UserCouponServiceImpl implements UserCouponService {
     public List<UserCouponQueryRespDTO> getUserCouponList(List<Long> userCouponIds, Long userId) {
         try {
             UserCouponListReqDTO requestParam = new UserCouponListReqDTO(userCouponIds, userId);
-            Result<List<UserCouponQueryRespDTO>> result = engineServiceApi.batchGetUserCouponList(requestParam);
+            Result<List<UserCouponQueryRespDTO>> result = couponServiceApi.batchGetUserCouponList(requestParam);
 
             if (result == null) {
                 log.error("[结算服务] | 远程调用引擎服务批量获取用户优惠券列表返回空结果，userId: {}, couponIds: {}", userId, userCouponIds);

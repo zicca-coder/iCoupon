@@ -14,8 +14,8 @@ import com.zicca.icoupon.order.dao.mapper.OrderInfoMapper;
 import com.zicca.icoupon.order.dao.mapper.OrderItemCouponRecordMapper;
 import com.zicca.icoupon.order.dao.mapper.OrderItemMapper;
 import com.zicca.icoupon.order.dto.req.OrderCalculateReqDTO;
-import com.zicca.icoupon.order.dto.req.OrderItemReqDTO;
 import com.zicca.icoupon.order.dto.req.OrderGenerateReqDTO;
+import com.zicca.icoupon.order.dto.req.OrderItemReqDTO;
 import com.zicca.icoupon.order.dto.req.UserCouponBathLockReqDTO;
 import com.zicca.icoupon.order.dto.resp.OrderCalculateRespDTO;
 import com.zicca.icoupon.order.dto.resp.OrderQueryRespDTO;
@@ -25,7 +25,6 @@ import com.zicca.icoupon.order.service.UserCouponService;
 import com.zicca.icoupon.order.service.basic.calculation.PricePair;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,7 +48,6 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     private final OrderItemMapper orderItemMapper;
     private final OrderItemCouponRecordMapper orderItemCouponRecordMapper;
     private final OrderCalculateService orderCalculateService;
-    private final ConversionService conversionService;
     private final UserCouponService userCouponService;
 
     @Override
@@ -57,13 +55,13 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         if (id == null) {
             throw new ClientException("订单ID不能为空");
         }
-        OrderInfo orderInfo = orderInfoMapper.selectOrderInfoByIdAndUserId(id, Long.parseLong(UserContext.getUserId()));
+        OrderInfo orderInfo = orderInfoMapper.selectOrderInfoByIdAndUserId(id, UserContext.getUserId());
         return BeanUtil.copyProperties(orderInfo, OrderQueryRespDTO.class);
     }
 
     @Override
     public List<OrderQueryRespDTO> getOrderList() {
-        List<OrderInfo> orderInfos = orderInfoMapper.selectOrderInfoListByUserId(Long.parseLong(UserContext.getUserId()));
+        List<OrderInfo> orderInfos = orderInfoMapper.selectOrderInfoListByUserId(UserContext.getUserId());
         if (CollectionUtil.isEmpty(orderInfos)) {
             return List.of();
         }
@@ -77,7 +75,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         if (id == null) {
             throw new ClientException("订单ID不能为空");
         }
-        int i = orderInfoMapper.deleteOrderInfoByIdAndUserId(id, Long.parseLong(UserContext.getUserId()));
+        int i = orderInfoMapper.deleteOrderInfoByIdAndUserId(id, UserContext.getUserId());
         if (i < 1) {
             throw new ServiceException("删除订单失败");
         }
@@ -88,7 +86,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         if (CollectionUtil.isEmpty(ids)) {
             throw new ClientException("订单ID不能为空");
         }
-        int i = orderInfoMapper.deleteOrderInfoByIdsAndUserId(ids, Long.parseLong(UserContext.getUserId()));
+        int i = orderInfoMapper.deleteOrderInfoByIdsAndUserId(ids, UserContext.getUserId());
         if (i < ids.size()) {
             throw new ServiceException("删除订单失败");
         }

@@ -2,7 +2,7 @@ package com.zicca.icoupon.settlement.service.impl;
 
 import com.zicca.icoupon.framework.exception.RemoteException;
 import com.zicca.icoupon.framework.result.Result;
-import com.zicca.icoupon.settlement.api.EngineServiceApi;
+import com.zicca.icoupon.settlement.api.CouponServiceApi;
 import com.zicca.icoupon.settlement.dto.req.SupportedGoodsReqDTO;
 import com.zicca.icoupon.settlement.service.CouponTemplateService;
 import lombok.RequiredArgsConstructor;
@@ -21,13 +21,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CouponTemplateServiceImpl implements CouponTemplateService {
 
-    private final EngineServiceApi engineServiceApi;
+    private final CouponServiceApi couponServiceApi;
 
     @Override
     public Boolean isSupportGoods(Long couponTemplateId, Long shopId, Long goodsId) {
         try {
             SupportedGoodsReqDTO requestParam = new SupportedGoodsReqDTO(couponTemplateId, shopId, goodsId);
-            Result<Boolean> result = engineServiceApi.isSupportGoods(requestParam);
+            Result<Boolean> result = couponServiceApi.isSupportGoods(requestParam);
 
             if (result == null) {
                 log.error("[结算服务] | 远程调用引擎服务判断商品是否支持优惠券返回空结果，" + "couponTemplateId: {}, shopId: {}, goodsId: {}",

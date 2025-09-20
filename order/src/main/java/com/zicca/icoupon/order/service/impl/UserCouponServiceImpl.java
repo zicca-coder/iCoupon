@@ -1,6 +1,6 @@
 package com.zicca.icoupon.order.service.impl;
 
-import com.zicca.icoupon.order.api.EngineServiceApi;
+import com.zicca.icoupon.order.api.CouponServiceApi;
 import com.zicca.icoupon.order.dto.req.UserCouponBathLockReqDTO;
 import com.zicca.icoupon.order.service.UserCouponService;
 import lombok.RequiredArgsConstructor;
@@ -15,17 +15,17 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserCouponServiceImpl implements UserCouponService {
 
-    private final EngineServiceApi engineServiceApi;
+    private final CouponServiceApi couponServiceApi;
 
 
     @Override
     public void lockUserCoupon(Long id, Long userId) {
-        engineServiceApi.lockUserCoupon(id, userId);
+        couponServiceApi.lockUserCoupon(id, userId);
     }
 
     @Override
     public void batchLockUserCoupon(UserCouponBathLockReqDTO requestParam) {
-        engineServiceApi.batchLockUserCoupon(requestParam);
+        couponServiceApi.batchLockUserCoupon(requestParam);
     }
 
 }

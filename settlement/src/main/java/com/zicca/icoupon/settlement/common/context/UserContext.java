@@ -26,7 +26,7 @@ public class UserContext {
      *
      * @return 用户 ID
      */
-    public static String getUserId() {
+    public static Long getUserId() {
         UserInfoDTO userInfoDTO = USER_THREAD_LOCAL.get();
         return Optional.ofNullable(userInfoDTO).map(UserInfoDTO::getUserId).orElse(null);
     }

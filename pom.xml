@@ -16,12 +16,14 @@
         <module>admin</module>
         <!--优惠券分发模块-->
         <module>distribution</module>
-        <!--优惠券执行模块-->
-        <module>engine</module>
+        <!--优惠券核心模块-->
+        <module>coupon</module>
         <!--订单、优惠券结算、支付模块-->
         <module>settlement</module>
         <!--订单模块-->
         <module>order</module>
+        <!--商品模块-->
+        <module>goods</module>
     </modules>
 
     <properties>
