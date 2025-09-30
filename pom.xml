@@ -24,6 +24,8 @@
         <module>order</module>
         <!--商品模块-->
         <module>goods</module>
+        <!--智能体模块-->
+        <module>agent</module>
     </modules>
 
     <properties>
@@ -51,6 +53,7 @@
         <easyexcel.version>4.0.1</easyexcel.version>
         <minio.version>8.5.9</minio.version>
         <druid.version>1.2.18</druid.version>
+        <zthread.version>1.1.1</zthread.version>
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <flatten-maven-plugin.version>1.3.0</flatten-maven-plugin.version>
     </properties>
@@ -128,7 +131,7 @@
             <!-- Redisson分布式锁 -->
             <dependency>
                 <groupId>org.redisson</groupId>
-                <artifactId>redisson</artifactId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
                 <version>${redisson.version}</version>
             </dependency>
             <!-- Google Guava -->
@@ -190,6 +193,54 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid-spring-boot-starter</artifactId>
                 <version>${druid.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-starter-model-openai</artifactId>
+                <version>${spring-ai.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-starter-model-deepseek</artifactId>
+                <version>${spring-ai.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba.cloud.ai</groupId>
+                <artifactId>spring-ai-alibaba-starter-dashscope</artifactId>
+                <version>${spring-ai-alibaba.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-autoconfigure-model-chat-memory</artifactId>
+                <version>${spring-ai.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-starter-model-chat-memory-repository-jdbc</artifactId>
+                <version>${spring-ai.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba.cloud.ai</groupId>
+                <artifactId>spring-ai-alibaba-starter-memory-redis</artifactId>
+                <version>${spring-ai-alibaba.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.zicca.zthread</groupId>
+                <artifactId>zthread-nacos-cloud-spring-boot-starter</artifactId>
+                <version>${zthread.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.zicca.zthread</groupId>
+                <artifactId>zthread-web-spring-boot-starter</artifactId>
+                <version>${zthread.version}</version>
             </dependency>
 
         </dependencies>

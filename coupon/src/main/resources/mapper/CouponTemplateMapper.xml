@@ -1,10 +1,11 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zicca.icoupon.engine.dao.mapper.CouponTemplateMapper">
+<mapper namespace="com.zicca.icoupon.coupon.dao.mapper.CouponTemplateMapper">
 
-    <sql id ="column">
-        id,
+    <sql id="column">
+        id
+        ,
         name,
         shop_id,
         target,
@@ -20,6 +21,39 @@
         status
     </sql>
 
+    <sql id="allColumn">
+        <include refid="column"/>
+        ,
+        create_time,
+        update_time,
+        create_by,
+        update_by,
+        del_flag
+    </sql>
+
+    <sql id="insertValue">
+        #{id}
+        ,
+        #{name},
+        #{shopId},
+        #{target.code},
+        #{type.code},
+        #{faceValue},
+        #{minAmount},
+        #{maxDiscountAmount},
+        #{maxRandomAmount},
+        #{stock},
+        #{validStartTime},
+        #{validEndTime},
+        #{maxReceivePerUser},
+        #{status.code},
+        #{createTime},
+        #{updateTime},
+        #{createBy},
+        #{updateBy},
+        #{delFlag}
+    </sql>
+
     <sql id="baseCondition">
         <if test="id != null">
             AND id = #{id}
@@ -29,6 +63,16 @@
         </if>
         AND del_flag = 0
     </sql>
+
+
+    <insert id="insertCouponTemplate">
+        INSERT INTO
+        t_coupon_template (
+        <include refid="allColumn"/>
+        ) VALUES (
+        <include refid="insertValue"/>
+        )
+    </insert>
 
 
     <!--增加优惠券模板发行量-->
@@ -50,7 +94,7 @@
 
     <select id="selectCouponTemplateById" resultType="com.zicca.icoupon.coupon.dao.entity.CouponTemplate">
         SELECT
-            <include refid="column"/>
+        <include refid="column"/>
         FROM t_coupon_template
         WHERE 1=1
         <include refid="baseCondition"/>
@@ -58,7 +102,7 @@
 
     <select id="selectCouponTemplateByIds" resultType="com.zicca.icoupon.coupon.dao.entity.CouponTemplate">
         SELECT
-            <include refid="column"/>
+        <include refid="column"/>
         FROM t_coupon_template
         WHERE 1=1
         AND id IN
@@ -72,7 +116,69 @@
         AND del_flag = 0
     </select>
 
+    <select id="selectCouponTemplateListByShopId" resultType="com.zicca.icoupon.coupon.dao.entity.CouponTemplate">
+        SELECT
+        <include refid="column"/>
+        FROM t_coupon_template
+        WHERE 1=1
+        AND shop_id = #{shopId}
+        AND del_flag = 0
+        AND valid_end_time > NOW()
+        ORDER BY type, valid_start_time ASC
+    </select>
 
+    <select id="selectCouponTemplateListByShopIdAndStatus"
+            resultType="com.zicca.icoupon.coupon.dao.entity.CouponTemplate">
+        SELECT
+        <include refid="column"/>
+        FROM t_coupon_template
+        WHERE 1=1
+        AND shop_id = #{shopId}
+        AND status = #{status}
+        AND del_flag = 0
+        AND valid_end_time > NOW()
+        ORDER BY type, valid_start_time ASC
+    </select>
+
+    <select id="selectCouponTemplateListByShopIdAndType"
+            resultType="com.zicca.icoupon.coupon.dao.entity.CouponTemplate">
+        SELECT
+        <include refid="column"/>
+        FROM t_coupon_template
+        WHERE 1=1
+        AND shop_id = #{shopId}
+        AND type = #{type}
+        AND del_flag = 0
+        AND valid_end_time > NOW()
+        ORDER BY valid_start_time ASC
+    </select>
+
+    <select id="fetchCouponTemplateIds" resultType="java.lang.Long">
+        SELECT id
+        FROM t_coupon_template
+        WHERE 1=1
+        AND del_flag = 0
+        AND status != 2
+        AND status != 3
+        AND valid_end_time > NOW()
+    </select>
+
+    <delete id="deleteCouponTemplateByIdAndShopId">
+        DELETE
+        FROM t_coupon_template
+        WHERE id = #{id}
+          AND shop_id = #{shopId}
+          AND del_flag = 0
+    </delete>
+
+    <update id="updateCouponTemplateStatusByIdAndShopId">
+        UPDATE
+        t_coupon_template
+        SET status = #{status.code}
+        WHERE id = #{id}
+          AND shop_id = #{shopId}
+          AND del_flag = 0
+    </update>
 
 
 </mapper>

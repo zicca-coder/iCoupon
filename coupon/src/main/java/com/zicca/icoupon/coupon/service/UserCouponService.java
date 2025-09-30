@@ -77,4 +77,20 @@ public interface UserCouponService extends IService<UserCoupon> {
     void batchLockUserCoupon(UserCouponBathLockReqDTO requestParam);
 
 
+    /**
+     * 获取用户一周内领取的优惠券
+     *
+     * @param userId 用户ID
+     * @return 优惠券列表
+     */
+    List<UserCouponQueryRespDTO> getUserCouponListWithInWeek(Long userId);
+
+
+    /**
+     * 获取用户三天内领取的优惠券
+     *
+     * @param userId 用户ID
+     * @return 优惠券列表
+     */
+    List<UserCouponQueryRespDTO> getUserCouponListWithInThreeDays(Long userId);
 }

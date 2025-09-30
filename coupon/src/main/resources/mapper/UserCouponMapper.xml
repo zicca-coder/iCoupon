@@ -1,7 +1,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zicca.icoupon.engine.dao.mapper.UserCouponMapper">
+<mapper namespace="com.zicca.icoupon.coupon.dao.mapper.UserCouponMapper">
 
     <sql id="column">
         id,
@@ -169,8 +169,8 @@
         WHERE 1=1
         AND user_id = #{userId}
         AND status = 0
-        AND valid_start_time <![CDATA[ <= ]]> #{now}
-        AND valid_end_time <![CDATA[ >= ]]> #{now}
+        AND valid_start_time <![CDATA[ <= ]]> NOW()
+        AND valid_end_time <![CDATA[ >= ]]> NOW()
         ORDER BY receive_time DESC
     </select>
 
@@ -198,5 +198,26 @@
         AND del_flag = 0
     </update>
 
+    <select id="selectUserCouponsWithinOneWeek" resultType="com.zicca.icoupon.coupon.dao.entity.UserCoupon">
+        SELECT
+        <include refid="column"/>
+        FROM t_user_coupon
+        WHERE 1=1
+        AND user_id = #{userId}
+        AND receive_time >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        AND del_flag = 0
+        ORDER BY receive_time DESC
+    </select>
+
+    <select id="selectUserCouponsWithinThreeDays" resultType="com.zicca.icoupon.coupon.dao.entity.UserCoupon">
+        SELECT
+        <include refid="column"/>
+        FROM t_user_coupon
+        WHERE 1=1
+        AND user_id = #{userId}
+        AND receive_time >= DATE_SUB(NOW(), INTERVAL 3 DAY)
+        AND del_flag = 0
+        ORDER BY receive_time DESC
+    </select>
 
 </mapper>

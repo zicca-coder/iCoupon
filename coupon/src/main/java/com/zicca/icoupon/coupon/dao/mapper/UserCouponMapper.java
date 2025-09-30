@@ -117,4 +117,20 @@ public interface UserCouponMapper extends BaseMapper<UserCoupon> {
      */
     int updateStatusByIdsAndUserId(@Param("ids") List<Long> ids, @Param("userId") Long userId, @Param("status") UserCouponStatusEnum status);
 
+    /**
+     * 查询用户一周内领取的优惠券
+     *
+     * @param userId 用户 ID
+     * @return 用户优惠券列表
+     */
+    List<UserCoupon> selectUserCouponsWithinOneWeek(@Param("userId") Long userId);
+
+
+    /**
+     * 查询用户三天内领取的优惠券
+     *
+     * @param userId 用户 ID
+     * @return 用户优惠券列表
+     */
+    List<UserCoupon> selectUserCouponsWithinThreeDays(@Param("userId") Long userId);
 }

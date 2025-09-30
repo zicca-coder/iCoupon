@@ -1,6 +1,7 @@
 package com.zicca.icoupon.coupon.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zicca.icoupon.coupon.common.enums.UserCouponStatusEnum;
@@ -13,6 +14,7 @@ import com.zicca.icoupon.coupon.dto.req.UserCouponListReqDTO;
 import com.zicca.icoupon.coupon.dto.req.UserCouponReceiveReqDTO;
 import com.zicca.icoupon.coupon.dto.resp.UserCouponQueryRespDTO;
 import com.zicca.icoupon.coupon.service.UserCouponService;
+import com.zicca.icoupon.framework.exception.ClientException;
 import com.zicca.icoupon.framework.exception.ServiceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -198,6 +200,48 @@ public class UserCouponServiceImpl extends ServiceImpl<UserCouponMapper, UserCou
         } catch (Exception e) {
             log.error("[用户优惠券服务] 批量锁定用户优惠券 - 锁定失败, requestParam: {}", requestParam);
             throw new ServiceException("锁定失败");
+        }
+    }
+
+    @Override
+    public List<UserCouponQueryRespDTO> getUserCouponListWithInWeek(Long userId) {
+        if (Objects.isNull(userId)) {
+            log.warn("[用户优惠券服务] 获取用户一周内领取的优惠券列表 - 用户ID不能为空");
+            throw new ClientException("用户ID不能为空");
+        }
+        try {
+            List<UserCoupon> userCoupons = userCouponMapper.selectUserCouponsWithinOneWeek(userId);
+            if (CollUtil.isEmpty(userCoupons)) {
+                log.warn("[用户优惠券服务] 获取用户一周内领取的优惠券列表 - 优惠券不存在, userId: {}", userId);
+                return List.of();
+            }
+            return userCoupons.stream()
+                    .map(userCoupon -> BeanUtil.copyProperties(userCoupon, UserCouponQueryRespDTO.class))
+                    .toList();
+        } catch (Exception e) {
+            log.error("[用户优惠券服务] 获取用户一周内领取的优惠券列表 - 获取失败, userId: {}", userId);
+            throw new ServiceException("获取失败");
+        }
+    }
+
+    @Override
+    public List<UserCouponQueryRespDTO> getUserCouponListWithInThreeDays(Long userId) {
+        if (Objects.isNull(userId)) {
+            log.warn("[用户优惠券服务] 获取用户三天内领取的优惠券列表 - 用户ID不能为空");
+            throw new ClientException("用户ID不能为空");
+        }
+        try {
+            List<UserCoupon> userCoupons = userCouponMapper.selectUserCouponsWithinThreeDays(userId);
+            if (CollUtil.isEmpty(userCoupons)) {
+                log.warn("[用户优惠券服务] 获取用户三天内领取的优惠券列表 - 优惠券不存在, userId: {}", userId);
+                return List.of();
+            }
+            return userCoupons.stream()
+                    .map(userCoupon -> BeanUtil.copyProperties(userCoupons, UserCouponQueryRespDTO.class))
+                    .toList();
+        } catch (Exception e) {
+            log.error("[用户优惠券服务] 获取用户三天内领取的优惠券列表 - 获取失败, userId: {}", userId);
+            throw new ServiceException("获取失败");
         }
     }
 

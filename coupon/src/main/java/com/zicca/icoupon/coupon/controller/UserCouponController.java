@@ -30,7 +30,7 @@ public class UserCouponController {
 
     private final UserCouponService userCouponService;
 
-    @PostMapping
+    @PostMapping("/api/v1/coupon/user-coupons")
     @Operation(summary = "领取优惠券", description = "领取优惠券")
     @ApiResponse(
             responseCode = "200", description = "领取优惠券成功",
@@ -43,7 +43,7 @@ public class UserCouponController {
 
 
 
-    @GetMapping("/{id}/{userId}")
+    @GetMapping("/api/v1/coupon/user-coupons/{id}/{userId}")
     @Operation(summary = "查询用户优惠券", description = "查询用户优惠券")
     @ApiResponse(
             responseCode = "200", description = "查询用户优惠券成功",
@@ -54,7 +54,7 @@ public class UserCouponController {
     }
 
 
-    @PutMapping("/batch/{id}/{userId}")
+    @PutMapping("/api/v1/coupon/user-coupons/batch/{id}/{userId}")
     @Operation(summary = "锁定用户优惠券", description = "锁定用户优惠券")
     @ApiResponse(
             responseCode = "200", description = "锁定用户优惠券成功",
@@ -66,14 +66,19 @@ public class UserCouponController {
     }
 
 
-    @PutMapping("/batch-lock")
+    @PutMapping("/api/v1/coupon/user-coupons/batch-lock")
+    @Operation(summary = "批量锁定用户优惠券", description = "批量锁定用户优惠券")
+    @ApiResponse(
+            responseCode = "200", description = "批量锁定用户优惠券成功",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))
+    )
     public Result<Void> batchLockUserCoupon(@RequestBody UserCouponBathLockReqDTO requestParam) {
         userCouponService.batchLockUserCoupon(requestParam);
         return Results.success();
     }
 
 
-    @PostMapping("/batch")
+    @PostMapping("/api/v1/coupon/user-coupons/batch")
     @Operation(summary = "批量查询用户优惠券", description = "批量查询用户优惠券")
     @ApiResponse(
             responseCode = "200", description = "批量查询用户优惠券成功",
@@ -84,7 +89,7 @@ public class UserCouponController {
     }
 
 
-    @GetMapping("/available/{userId}")
+    @GetMapping("/api/v1/coupon/user-coupons/available/{userId}")
     @Operation(summary = "查询用户可用优惠券", description = "查询用户可用优惠券")
     @ApiResponse(
             responseCode = "200", description = "查询用户可用优惠券成功",
@@ -93,5 +98,28 @@ public class UserCouponController {
     public Result<List<UserCouponQueryRespDTO>> getAvailableUserCouponList(@PathVariable("userId") Long userId) {
         return Results.success(userCouponService.getAvailableUserCouponList(userId));
     }
+
+
+    @GetMapping("/api/v1/coupon/user-coupons/within-one-week/{userId}")
+    @Operation(summary = "查询用户一周内领取优惠券", description = "查询用户一周内领取的优惠券")
+    @ApiResponse(
+            responseCode = "200", description = "查询用户一周内领取优惠券成功",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserCouponQueryRespDTO.class))
+    )
+    public Result<List<UserCouponQueryRespDTO>> getUserCouponListWithinOneWeek(@PathVariable("userId") Long userId) {
+        return Results.success(userCouponService.getUserCouponListWithInWeek(userId));
+    }
+
+
+    @GetMapping("/api/v1/coupon/user-coupons/within-three-days/{userId}")
+    @Operation(summary = "查询用户三天内领取优惠券", description = "查询用户三天内领取的优惠券")
+    @ApiResponse(
+            responseCode = "200", description = "查询用户三天内领取优惠券成功",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserCouponQueryRespDTO.class))
+    )
+    public Result<List<UserCouponQueryRespDTO>> getUserCouponListWithinThreeDays(@PathVariable("userId") Long userId) {
+        return Results.success(userCouponService.getUserCouponListWithInThreeDays(userId));
+    }
+
 
 }

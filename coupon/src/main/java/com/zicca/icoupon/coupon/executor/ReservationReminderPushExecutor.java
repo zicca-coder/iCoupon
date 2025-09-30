@@ -28,15 +28,7 @@ public class ReservationReminderPushExecutor {
     private final ReservationReminderService reservationReminderService;
     private final NotificationStrategyManager notificationStrategyManager;
     // 推送消息执行器
-    private final ExecutorService executorService = new ThreadPoolExecutor(
-            Runtime.getRuntime().availableProcessors() << 1,
-            Runtime.getRuntime().availableProcessors() << 2,
-            60L,
-            TimeUnit.SECONDS,
-            new SynchronousQueue<>(),
-            new ThreadFactoryBuilder().setNamePrefix("reservation-reminder-push-%d").build(),
-            new ThreadPoolExecutor.CallerRunsPolicy()
-    );
+    private final ThreadPoolExecutor reservationReminderPushExecutor;
 
 
     public void execute(ReservationReminderDTO requestParam) {
@@ -44,7 +36,7 @@ public class ReservationReminderPushExecutor {
             log.info("用户已取消优惠券预约提醒，参数：{}", JSON.toJSONString(requestParam));
             return;
         }
-        executorService.execute(() -> {
+        reservationReminderPushExecutor.execute(() -> {
             // 推送提醒
             String message = String.format("您预约的优惠券【%s】即将在%s开始领取，请及时关注！",
                     requestParam.getCouponTemplateId(), requestParam.getStartTime());

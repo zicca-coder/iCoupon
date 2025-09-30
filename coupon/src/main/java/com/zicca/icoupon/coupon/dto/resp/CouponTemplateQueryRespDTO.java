@@ -4,7 +4,10 @@ import com.zicca.icoupon.coupon.common.enums.CouponTemplateStatusEnum;
 import com.zicca.icoupon.coupon.common.enums.DiscountTargetEnum;
 import com.zicca.icoupon.coupon.common.enums.DiscountTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -16,6 +19,9 @@ import java.util.List;
  * @author zicca
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Schema(description = "优惠券模板查询响应参数")
 public class CouponTemplateQueryRespDTO {
 
