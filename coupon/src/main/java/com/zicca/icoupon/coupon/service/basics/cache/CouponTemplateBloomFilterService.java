@@ -13,6 +13,7 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.DependsOn;
@@ -54,7 +55,7 @@ public class CouponTemplateBloomFilterService implements ApplicationRunner {
     public CouponTemplateBloomFilterService(@Autowired RBloomFilter<Long> redisBloomFilter,
                                             @Autowired BloomFilter<Long> guavaBloomFilter,
                                             @Autowired CouponTemplateMapper couponTemplateMapper,
-                                            @Autowired ThreadPoolExecutor bloomFilterInitExecutor,
+                                            @Autowired @Qualifier("bloomFilterInitExecutor") ThreadPoolExecutor bloomFilterInitExecutor,
                                             @Autowired RedissonClient redissonClient,
                                             @Autowired StringRedisTemplate stringRedisTemplate) {
         this.redisBloomFilterRef = new AtomicReference<>(redisBloomFilter);

@@ -1,4 +1,4 @@
-package com.zicca.icoupon.coupon.dto.resp;
+package com.zicca.icoupon.coupon.dto.req;
 
 import com.zicca.icoupon.coupon.common.enums.DiscountTargetEnum;
 import com.zicca.icoupon.coupon.common.enums.DiscountTypeEnum;
@@ -9,12 +9,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * 用户优惠券查询响应参数
+ * 创建用户优惠券请求参数
  *
  * @author zicca
  */
@@ -22,33 +21,25 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "用户优惠券查询响应参数")
-public class UserCouponQueryRespDTO implements Serializable {
-
-    private static final long serialVersionUID = -6048619909190931635L;
-    /**
-     * 主键 ID
-     */
-    @Schema(description = "主键 ID", example = "1960313844890882050")
-    private Long id;
+public class UserCouponCreateReqDTO {
 
     /**
      * 用户 ID
      */
-    @Schema(description = "用户 ID", example = "1961811779001393153")
+    @Schema(description = "用户 ID", example = "1")
     private Long userId;
 
     /**
      * 优惠券模板 ID
      */
-    @Schema(description = "优惠券模板 ID", example = "1960313844890882050")
+    @Schema(description = "优惠券模板 ID", example = "1")
     private Long couponTemplateId;
 
     /**
      * 店铺编号
      * 如果是店铺券：存储当前店铺编号
      */
-    @Schema(description = "店铺编号", example = "1810714735922956666")
+    @Schema(description = "店铺编号", example = "1")
     private Long shopId;
 
     /**
@@ -71,37 +62,37 @@ public class UserCouponQueryRespDTO implements Serializable {
      * 折扣券：折扣率
      * 随机券：随机金额
      */
-    @Schema(description = "立减券：立减金额 满减券：满足条件后立减的金额 折扣券：折扣率 随机券：随机金额", example = "20.0")
+    @Schema(description = "立减券：立减金额 满减券：满足条件后立减的金额 折扣券：折扣率 随机券：随机金额", example = "10")
     private BigDecimal faceValue;
 
     /**
      * 满减券门槛金额（仅满减券有效）
      */
-    @Schema(description = "满减券门槛金额（仅满减券有效）", example = "20.0")
+    @Schema(description = "满减券门槛金额（仅满减券有效）", example = "10")
     private BigDecimal minAmount;
 
     /**
      * 领取时间
      */
-    @Schema(description = "领取时间", example = "2023-05-01 00:00:00")
+    @Schema(description = "领取时间", example = "2021-01-01 00:00:00")
     private Date receiveTime;
 
     /**
      * 使用时间
      */
-    @Schema(description = "使用时间", example = "2023-05-01 00:00:00")
+    @Schema(description = "使用时间", example = "2021-01-01 00:00:00")
     private Date useTime;
 
     /**
      * 有效期开始时间
      */
-    @Schema(description = "有效期开始时间", example = "2023-05-01 00:00:00")
+    @Schema(description = "有效期开始时间", example = "2021-01-01 00:00:00")
     private Date validStartTime;
 
     /**
      * 有效期结束时间
      */
-    @Schema(description = "有效期结束时间", example = "2023-05-01 00:00:00")
+    @Schema(description = "有效期结束时间", example = "2021-01-01 00:00:00")
     private Date validEndTime;
 
     /**
@@ -110,4 +101,5 @@ public class UserCouponQueryRespDTO implements Serializable {
      */
     @Schema(description = "优惠券使用状态： 0-未使用 1-锁定 2-已使用 3-已过期 4-已撤回", example = "0")
     private UserCouponStatusEnum status;
+
 }

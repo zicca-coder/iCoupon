@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.zicca.icoupon.coupon.common.enums.UserCouponStatusEnum;
 import com.zicca.icoupon.coupon.dao.entity.UserCoupon;
 import com.zicca.icoupon.coupon.dto.req.UserCouponBathLockReqDTO;
+import com.zicca.icoupon.coupon.dto.req.UserCouponCreateReqDTO;
 import com.zicca.icoupon.coupon.dto.req.UserCouponListReqDTO;
 import com.zicca.icoupon.coupon.dto.req.UserCouponReceiveReqDTO;
 import com.zicca.icoupon.coupon.dto.resp.UserCouponQueryRespDTO;
@@ -24,6 +25,14 @@ public interface UserCouponService extends IService<UserCoupon> {
      * @param requestParam 用户领取优惠券请求参数
      */
     void receiveCoupon(UserCouponReceiveReqDTO requestParam);
+
+
+    /**
+     * 创建用户优惠券记录
+     *
+     * @param requestParam 创建用户优惠券请求参数
+     */
+    void createUserCoupon(UserCouponCreateReqDTO requestParam);
 
 
     /**

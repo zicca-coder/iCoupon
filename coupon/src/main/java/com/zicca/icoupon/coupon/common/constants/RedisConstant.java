@@ -29,4 +29,14 @@ public class RedisConstant {
     public static final String BLOOM_FILTER_LOCK_KEY = "icoupon:coupon:lock:bloomfilter:rebuild";
 
 
+    /**
+     * 用户优惠券列表缓存 Key | 缓存用户领取的优惠券列表
+     */
+    public static final String USER_COUPON_LIST_KEY = "icoupon:coupon:cache:usercoupon:list:";
+
+    /**
+     * 用户优惠券领取限制缓存 Key | 缓存用户领取优惠券的次数限制
+     */
+    public static final String USER_COUPON_LIMIT_KEY = "icoupon:coupon:cache:usercoupon:limit:";
+
 }

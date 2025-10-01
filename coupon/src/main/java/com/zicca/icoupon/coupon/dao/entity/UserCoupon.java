@@ -22,8 +22,8 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 @TableName("t_user_coupon")
+@EqualsAndHashCode(callSuper = true)
 public class UserCoupon extends BaseDO {
 
     /**

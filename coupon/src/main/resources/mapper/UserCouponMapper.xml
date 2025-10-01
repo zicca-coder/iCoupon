@@ -29,24 +29,24 @@
     </sql>
 
     <sql id="insertValues">
-        #{id},
-        #{userId},
-        #{couponTemplateId},
-        #{shopId},
-        #{target},
-        #{type},
-        #{faceValue},
-        #{minAmount},
-        #{receiveTime},
-        #{useTime},
-        #{validStartTime},
-        #{validEndTime},
-        #{status.code},
-        #{createTime},
-        #{updateTime},
-        #{createBy},
-        #{updateBy},
-        #{delFlag}
+        #{userCoupon.id},
+        #{userCoupon.userId},
+        #{userCoupon.couponTemplateId},
+        #{userCoupon.shopId},
+        #{userCoupon.target.code},
+        #{userCoupon.type.code},
+        #{userCoupon.faceValue},
+        #{userCoupon.minAmount},
+        #{userCoupon.receiveTime},
+        #{userCoupon.useTime},
+        #{userCoupon.validStartTime},
+        #{userCoupon.validEndTime},
+        #{userCoupon.status.code},
+        #{userCoupon.createTime},
+        #{userCoupon.updateTime},
+        #{userCoupon.createBy},
+        #{userCoupon.updateBy},
+        #{userCoupon.delFlag}
     </sql>
 
     <sql id="baseCondition">

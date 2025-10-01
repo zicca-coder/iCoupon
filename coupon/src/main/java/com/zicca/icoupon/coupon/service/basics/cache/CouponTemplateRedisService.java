@@ -183,7 +183,7 @@ public class CouponTemplateRedisService {
             log.error("[优惠券模板分布式缓存服务] 修改缓存状态参数异常: id={}, status={}", id, status);
         }
         String key = COUPON_TEMPLATE_KEY + id;
-        stringRedisTemplate.opsForHash().put(key, "status", status.getValue().toString());
+        stringRedisTemplate.opsForHash().put(key, "status", status.toString());
         CouponTemplateQueryRespDTO value = new CouponTemplateQueryRespDTO();
         Map<Object, Object> cacheHashMap = stringRedisTemplate.opsForHash().entries(key);
         value = BeanUtil.fillBeanWithMap(cacheHashMap, value, true);

@@ -17,6 +17,7 @@ import static com.zicca.icoupon.coupon.common.constants.MQConstants.RESERVATION_
 
 /**
  * 预约提醒推送消费者
+ *
  * @author zicca
  */
 @Slf4j

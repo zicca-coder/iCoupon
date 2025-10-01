@@ -21,7 +21,7 @@ public interface UserCouponMapper extends BaseMapper<UserCoupon> {
      * @param userCoupon 用户优惠券实体
      * @return 插入数量
      */
-    int insertUserCoupon(UserCoupon userCoupon);
+    int insertUserCoupon(@Param("userCoupon") UserCoupon userCoupon);
 
     /**
      * 批量插入用户优惠券

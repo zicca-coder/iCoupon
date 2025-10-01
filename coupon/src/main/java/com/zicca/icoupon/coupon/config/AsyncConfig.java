@@ -32,8 +32,8 @@ public class AsyncConfig {
     /**
      * 预约提醒推送线程池
      */
-    @Bean("reservationReminderPushExecutor")
-    public ThreadPoolExecutor reservationReminderPushExecutor() {
+    @Bean("reminderPushExecutor")
+    public ThreadPoolExecutor reminderPushExecutor() {
         return new ThreadPoolExecutor(
                 Runtime.getRuntime().availableProcessors() << 1,
                 Runtime.getRuntime().availableProcessors() << 2,

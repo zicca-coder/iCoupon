@@ -6,6 +6,7 @@ import com.zicca.icoupon.coupon.common.enums.NotifyTypeEnum;
 import com.zicca.icoupon.coupon.notification.NotificationStrategyManager;
 import com.zicca.icoupon.coupon.service.ReservationReminderService;
 import com.zicca.icoupon.coupon.service.basics.reminder.ReservationReminderDTO;
+import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -28,7 +29,8 @@ public class ReservationReminderPushExecutor {
     private final ReservationReminderService reservationReminderService;
     private final NotificationStrategyManager notificationStrategyManager;
     // 推送消息执行器
-    private final ThreadPoolExecutor reservationReminderPushExecutor;
+    @Resource
+    private ThreadPoolExecutor reminderPushExecutor;
 
 
     public void execute(ReservationReminderDTO requestParam) {
@@ -36,7 +38,7 @@ public class ReservationReminderPushExecutor {
             log.info("用户已取消优惠券预约提醒，参数：{}", JSON.toJSONString(requestParam));
             return;
         }
-        reservationReminderPushExecutor.execute(() -> {
+        reminderPushExecutor.execute(() -> {
             // 推送提醒
             String message = String.format("您预约的优惠券【%s】即将在%s开始领取，请及时关注！",
                     requestParam.getCouponTemplateId(), requestParam.getStartTime());
