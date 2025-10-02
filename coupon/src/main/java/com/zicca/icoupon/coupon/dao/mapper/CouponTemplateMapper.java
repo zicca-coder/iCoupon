@@ -45,6 +45,29 @@ public interface CouponTemplateMapper extends BaseMapper<CouponTemplate> {
                                      @Param("shopId") Long shopId,
                                      @Param("number") Integer number);
 
+
+    /**
+     * 根据优惠券模板 id 获取库存数量
+     *
+     * @param id     id
+     * @param shopId 店铺 id
+     * @return 库存数量
+     */
+    Integer selectStockById(@Param("id") Long id, @Param("shopId") Long shopId);
+
+    /**
+     * 减少优惠券模板库存
+     *
+     * @param couponTemplateId 优惠券模板 id
+     * @param shopId           店铺 id
+     * @param number           减少的数量
+     * @return 库存
+     */
+    Integer decreaseNumberCouponTemplateWithResult(@Param("couponTemplateId") Long couponTemplateId,
+                                                   @Param("shopId") Long shopId,
+                                                   @Param("number") Integer number);
+
+
     /**
      * 根据优惠券模板 id 获取优惠券模板
      *

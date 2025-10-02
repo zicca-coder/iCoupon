@@ -37,7 +37,7 @@ public class UserCouponController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))
     )
     public Result<Void> receiveCoupon(@RequestBody UserCouponReceiveReqDTO requestParam){
-        userCouponService.receiveCoupon(requestParam);
+        userCouponService.receiveCouponMQ(requestParam);
         return Results.success();
     }
 

@@ -92,6 +92,24 @@
           AND stock >= #{number}
     </update>
 
+    <select id="selectStockById" resultType="java.lang.Integer">
+        SELECT stock
+        FROM t_coupon_template
+        WHERE id = #{id}
+          AND shop_id = #{shopId}
+          AND del_flag = 0
+    </select>
+
+    <select id="decreaseNumberCouponTemplateWithResult" statementType="CALLABLE" resultType="java.lang.Integer">
+        { CALL decrease_coupon_stock_and_get_result(
+                #{couponTemplateId, mode=IN, jdbcType=BIGINT},
+                #{shopId, mode=IN, jdbcType=BIGINT},
+                #{number, mode=IN, jdbcType=INTEGER},
+                #{resultStock, mode=OUT, jdbcType=INTEGER}
+               )}
+    </select>
+
+
     <select id="selectCouponTemplateById" resultType="com.zicca.icoupon.coupon.dao.entity.CouponTemplate">
         SELECT
         <include refid="column"/>

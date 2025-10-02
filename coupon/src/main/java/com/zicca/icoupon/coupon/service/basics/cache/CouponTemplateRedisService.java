@@ -65,7 +65,7 @@ public class CouponTemplateRedisService {
         });
         args.add(String.valueOf(couponTemplateQueryRespDTO.getValidEndTime().getTime() / 1000));
         stringRedisTemplate.execute(redisScript, keys, args.toArray());
-        log.info("[优惠券模板分布式缓存服务] 缓存数据成功: id={}, couponTemplateQueryRespDTO={}", id, couponTemplateQueryRespDTO);
+        log.debug("[优惠券模板分布式缓存服务] 缓存数据成功: id={}, couponTemplateQueryRespDTO={}", id, couponTemplateQueryRespDTO);
     }
 
     /**
@@ -85,7 +85,7 @@ public class CouponTemplateRedisService {
         args.add(String.valueOf(NULL_VALUE_MARKER));
         args.add(String.valueOf(System.currentTimeMillis() + 5 * 60 * 1000)); // 5分钟后过期
         stringRedisTemplate.execute(redisScript, keys, args.toArray());
-        log.info("[优惠券模板分布式缓存服务] 缓存空值成功: id={}", id);
+        log.debug("[优惠券模板分布式缓存服务] 缓存空值成功: id={}", id);
     }
 
     public boolean isNullCache(CouponTemplateQueryRespDTO value) {
@@ -113,11 +113,11 @@ public class CouponTemplateRedisService {
         try {
             Map<Object, Object> cacheHashMap = stringRedisTemplate.opsForHash().entries(key);
             if (CollUtil.isEmpty(cacheHashMap)) {
-                log.info("[优惠券模板分布式缓存服务] 缓存未命中: id={}", id);
+                log.debug("[优惠券模板分布式缓存服务] 缓存未命中: id={}", id);
                 return null;
             }
             value = BeanUtil.fillBeanWithMap(cacheHashMap, value, true);
-            log.info("[优惠券模板分布式缓存服务] 获取缓存数据成功: id={}, couponTemplateQueryRespDTO={}", id, value);
+            log.debug("[优惠券模板分布式缓存服务] 获取缓存数据成功: id={}, couponTemplateQueryRespDTO={}", id, value);
             return value;
         } catch (Exception e) {
             log.error("[优惠券模板分布式缓存服务] 获取缓存数据失败: id={}, value={}", id, value);
@@ -132,7 +132,7 @@ public class CouponTemplateRedisService {
         }
         String key = COUPON_TEMPLATE_KEY + id;
         stringRedisTemplate.opsForHash().increment(key, "stock", num);
-        log.info("[优惠券模板分布式缓存服务] 修改缓存库存成功: id={}, num={}", id, num);
+        log.debug("[优惠券模板分布式缓存服务] 修改缓存库存成功: id={}, num={}", id, num);
     }
 
     public void incrStock(Long id) {
@@ -150,7 +150,7 @@ public class CouponTemplateRedisService {
         }
         String key = COUPON_TEMPLATE_KEY + id;
         stringRedisTemplate.opsForHash().increment(key, "stock", -num);
-        log.info("[优惠券模板分布式缓存服务] 修改缓存库存成功: id={}, num={}", id, -num);
+        log.debug("[优惠券模板分布式缓存服务] 修改缓存库存成功: id={}, num={}", id, -num);
     }
 
     public void decrStock(Long id) {
@@ -168,7 +168,7 @@ public class CouponTemplateRedisService {
         }
         String key = COUPON_TEMPLATE_KEY + id;
         stringRedisTemplate.delete(key);
-        log.info("[优惠券模板分布式缓存服务] 删除缓存数据成功: id={}", id);
+        log.debug("[优惠券模板分布式缓存服务] 删除缓存数据成功: id={}", id);
     }
 
     /**
@@ -187,7 +187,7 @@ public class CouponTemplateRedisService {
         CouponTemplateQueryRespDTO value = new CouponTemplateQueryRespDTO();
         Map<Object, Object> cacheHashMap = stringRedisTemplate.opsForHash().entries(key);
         value = BeanUtil.fillBeanWithMap(cacheHashMap, value, true);
-        log.info("[优惠券模板分布式缓存服务] 修改缓存状态成功: id={}, status={}, value={}", id, status, value);
+        log.debug("[优惠券模板分布式缓存服务] 修改缓存状态成功: id={}, status={}, value={}", id, status, value);
         return value;
     }
 

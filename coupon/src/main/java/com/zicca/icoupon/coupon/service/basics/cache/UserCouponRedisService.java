@@ -77,7 +77,7 @@ public class UserCouponRedisService {
             return -1;
         }
         int receiveCount = (int) StockDecrementReturnCombinedUtil.extractSecondField(stockDecrementResult);
-        log.info("[用户优惠券服务] 领取优惠券 - 分布式缓存扣减库存成功, templateId: {}, shopId: {}, receiveCount: {}", template.getId(), template.getShopId(), receiveCount);
+        log.debug("[用户优惠券服务] 领取优惠券 - 分布式缓存扣减库存成功, templateId: {}, shopId: {}, receiveCount: {}", template.getId(), template.getShopId(), receiveCount);
         return receiveCount;
     }
 
@@ -124,7 +124,7 @@ public class UserCouponRedisService {
             // 延时队列重新缓存，为了简单直接新增
             stringRedisTemplate.opsForZSet().add(key, valueItem, score);
         }
-        log.info("[用户优惠券分布式缓存服务] 缓存用户领取记录成功: userId={}, userCouponId={}, couponTemplateId={}", userId, userCouponId, couponTemplateId);
+        log.debug("[用户优惠券分布式缓存服务] 缓存用户领取记录成功: userId={}, userCouponId={}, couponTemplateId={}", userId, userCouponId, couponTemplateId);
     }
 
 
@@ -174,7 +174,7 @@ public class UserCouponRedisService {
             // 延时队列重新缓存，为了简单直接新增
             stringRedisTemplate.opsForZSet().add(key, value, score);
         }
-        log.info("[用户优惠券分布式缓存服务] 缓存用户领取记录成功: userCoupon={}", userCoupon);
+        log.debug("[用户优惠券分布式缓存服务] 缓存用户领取记录成功: userCoupon={}", userCoupon);
     }
 
     @SneakyThrows
@@ -190,7 +190,7 @@ public class UserCouponRedisService {
             return Collections.emptyList();
         }
         List<UserCouponQueryRespDTO> list = values.stream().map(value -> JSON.parseObject(value, UserCouponQueryRespDTO.class)).toList();
-        log.info("[用户优惠券分布式缓存服务] 获取用户领取记录成功: userId={}, list={}", userId, list);
+        log.debug("[用户优惠券分布式缓存服务] 获取用户领取记录成功: userId={}, list={}", userId, list);
         return list;
     }
 
@@ -206,7 +206,7 @@ public class UserCouponRedisService {
             log.warn("[用户优惠券分布式缓存服务] 删除用户领取记录失败: userCoupon={}", userCoupon);
             return;
         }
-        log.info("[用户优惠券分布式缓存服务] 删除用户领取记录成功: userCoupon={}", userCoupon);
+        log.debug("[用户优惠券分布式缓存服务] 删除用户领取记录成功: userCoupon={}", userCoupon);
     }
 
 

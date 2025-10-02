@@ -33,7 +33,7 @@ public class CouponTemplateCaffeineService {
         }
         String cacheKey = CACHE_PREFIX + key;
         couponTemplateCache.put(cacheKey, value);
-        log.info("[优惠券模板本地缓存服务] 缓存数据成功: key={}, value={}", key, value);
+        log.debug("[优惠券模板本地缓存服务] 缓存数据成功: key={}, value={}", key, value);
     }
 
     /**
@@ -49,7 +49,7 @@ public class CouponTemplateCaffeineService {
         String cacheKey = CACHE_PREFIX + key;
         CouponTemplateQueryRespDTO nullCache = CouponTemplateQueryRespDTO.builder().id(NULL_VALUE_MARKER).build();
         couponTemplateCache.put(cacheKey, nullCache);
-        log.info("[优惠券模板本地缓存服务] 缓存空值成功: key={}", key);
+        log.debug("[优惠券模板本地缓存服务] 缓存空值成功: key={}", key);
     }
 
 
@@ -78,7 +78,7 @@ public class CouponTemplateCaffeineService {
             log.warn("[优惠券模板本地缓存服务] 缓存未命中: key={}", key);
             return null;
         }
-        log.info("[优惠券模板本地缓存服务] 获取缓存数据成功: key={}, value={}", key, value);
+        log.debug("[优惠券模板本地缓存服务] 获取缓存数据成功: key={}, value={}", key, value);
         return value;
     }
 
@@ -94,7 +94,7 @@ public class CouponTemplateCaffeineService {
         }
         String cacheKey = CACHE_PREFIX + key;
         couponTemplateCache.invalidate(cacheKey);
-        log.info("[优惠券模板本地缓存服务] 删除缓存数据成功: key={}", key);
+        log.debug("[优惠券模板本地缓存服务] 删除缓存数据成功: key={}", key);
     }
 
 }

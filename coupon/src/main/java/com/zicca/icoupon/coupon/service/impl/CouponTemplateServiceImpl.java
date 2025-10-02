@@ -8,6 +8,8 @@ import com.zicca.icoupon.coupon.dao.entity.CouponTemplate;
 import com.zicca.icoupon.coupon.dao.mapper.CouponTemplateMapper;
 import com.zicca.icoupon.coupon.dto.req.*;
 import com.zicca.icoupon.coupon.dto.resp.CouponTemplateQueryRespDTO;
+import com.zicca.icoupon.coupon.mq.event.StockUpdateEvent;
+import com.zicca.icoupon.coupon.mq.producer.StockUpdateProducer;
 import com.zicca.icoupon.coupon.service.CouponTemplateGoodsService;
 import com.zicca.icoupon.coupon.service.CouponTemplateService;
 import com.zicca.icoupon.coupon.service.basics.cache.CouponTemplateBloomFilterService;
@@ -23,12 +25,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static com.zicca.icoupon.coupon.common.constants.RedisConstant.COUPON_TEMPLATE_LOCK_KEY;
 import static com.zicca.icoupon.coupon.common.enums.CouponTemplateStatusEnum.*;
 import static com.zicca.icoupon.coupon.common.enums.DiscountTargetEnum.PARTIAL;
+import static com.zicca.icoupon.coupon.common.enums.StockUpdateTypeEnum.MERCHANT_UPDATE_STOCK;
 
 /**
  * 优惠券模板服务实现类
@@ -46,6 +48,7 @@ public class CouponTemplateServiceImpl extends ServiceImpl<CouponTemplateMapper,
     private final CouponTemplateCaffeineService caffeineService;
     private final CouponTemplateBloomFilterService bloomFilterService;
     private final RedissonClient redissonClient;
+    private final StockUpdateProducer stockUpdateProducer;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -77,13 +80,19 @@ public class CouponTemplateServiceImpl extends ServiceImpl<CouponTemplateMapper,
         if (requestParam == null || requestParam.getCouponTemplateId() == null || requestParam.getShopId() == null || requestParam.getNumber() == null) {
             log.warn("[优惠券模板服务] 增加优惠券模板库存参数不完整: requestParam={}", requestParam);
         }
-        int update = couponTemplateMapper.increaseNumberCouponTemplate(requestParam.getCouponTemplateId(), requestParam.getShopId(), requestParam.getNumber());
-        if (update <= 0) {
-            log.error("[优惠券模板服务] 增加优惠券模板库存失败: update={}, requestParam={}", update, requestParam);
-        }
-        // 领券扣减库存时仅从分布式缓存扣减，因此这里不修改本地缓存库存，本地缓存仅展示优惠券模板基本信息
-        redisService.incrStock(requestParam.getCouponTemplateId(), requestParam.getNumber());
-        log.info("[优惠券模板服务] 增加优惠券模板库存成功: update={}, requestParam={}", update, requestParam);
+        StockUpdateEvent.CouponTemplateStockUpdateEvent stockUpdateEvent = StockUpdateEvent.CouponTemplateStockUpdateEvent.builder()
+                .couponTemplateId(requestParam.getCouponTemplateId())
+                .shopId(requestParam.getShopId())
+                .number(requestParam.getNumber())
+                .isAdd(true)
+                .build();
+        StockUpdateEvent event = StockUpdateEvent.builder()
+                .type(MERCHANT_UPDATE_STOCK)
+                .couponTemplateId(requestParam.getCouponTemplateId())
+                .couponTemplateStockUpdateEvent(stockUpdateEvent)
+                .build();
+        stockUpdateProducer.sendMessage(event);
+        log.debug("[优惠券模板服务] 增加优惠券模板库存成功: requestParam={}", requestParam);
     }
 
     @Override
@@ -91,13 +100,10 @@ public class CouponTemplateServiceImpl extends ServiceImpl<CouponTemplateMapper,
         if (requestParam == null || requestParam.getCouponTemplateId() == null || requestParam.getShopId() == null || requestParam.getNumber() == null) {
             log.warn("[优惠券模板服务] 减少优惠券模板库存参数不完整: requestParam={}", requestParam);
         }
-        int update = couponTemplateMapper.decreaseNumberCouponTemplate(requestParam.getCouponTemplateId(), requestParam.getShopId(), requestParam.getNumber());
-        if (update <= 0) {
-            log.error("[优惠券模板服务] 减少优惠券模板库存失败: update={}, requestParam={}", update, requestParam);
-        }
-        // 领券扣减库存时仅从分布式缓存扣减，因此这里不修改本地缓存库存，本地缓存仅展示优惠券模板基本信息
-        redisService.decrStock(requestParam.getCouponTemplateId(), requestParam.getNumber());
-        log.info("[优惠券模板服务] 减少优惠券模板库存成功: update={}, requestParam={}", update, requestParam);
+
+
+
+        log.debug("[优惠券模板服务] 减少优惠券模板库存成功: requestParam={}", requestParam);
     }
 
     @Override
@@ -113,7 +119,7 @@ public class CouponTemplateServiceImpl extends ServiceImpl<CouponTemplateMapper,
                 log.warn("[优惠券模板服务] 获取优惠券模板信息 - 本地缓存空值: id={}, shopId={}", id, shopId);
                 return null;
             }
-            log.info("[优惠券模板服务] 获取优惠券模板信息 - 从本地缓存中获取: id={}, shopId={}", id, shopId);
+            log.debug("[优惠券模板服务] 获取优惠券模板信息 - 从本地缓存中获取: id={}, shopId={}", id, shopId);
             return cacheValue;
         }
         // 本地布隆过滤器
@@ -129,7 +135,7 @@ public class CouponTemplateServiceImpl extends ServiceImpl<CouponTemplateMapper,
                 caffeineService.putNullToCache(id);
                 return null;
             }
-            log.info("[优惠券模板服务] 获取优惠券模板信息 - 从分布式缓存中获取: id={}, shopId={}", id, shopId);
+            log.debug("[优惠券模板服务] 获取优惠券模板信息 - 从分布式缓存中获取: id={}, shopId={}", id, shopId);
             caffeineService.put(id, cacheValue);
             return cacheValue;
         }
@@ -144,14 +150,14 @@ public class CouponTemplateServiceImpl extends ServiceImpl<CouponTemplateMapper,
         RLock lock = redissonClient.getLock(COUPON_TEMPLATE_LOCK_KEY + id);
         try {
             if (lock.tryLock(10, TimeUnit.SECONDS)) {
-                log.info("[优惠券模板服务] 获取优惠券模板信息，重建缓存 - 线程:{}, 获取锁成功", Thread.currentThread().getName());
+                log.debug("[优惠券模板服务] 获取优惠券模板信息，重建缓存 - 线程:{}, 获取锁成功", Thread.currentThread().getName());
                 // 双重判定，是否有其他线程在当前线程等待获取锁期间重建了缓存
                 if ((cacheValue = caffeineService.get(id)) != null) {
                     if (caffeineService.isNullCache(cacheValue)) {
                         log.warn("[优惠券模板服务] 获取优惠券模板信息 - 本地缓存空值: id={}, shopId={}", id, shopId);
                         return null;
                     }
-                    log.info("[优惠券模板服务] 获取优惠券模板信息 - 从本地缓存中获取: id={}, shopId={}", id, shopId);
+                    log.debug("[优惠券模板服务] 获取优惠券模板信息 - 从本地缓存中获取: id={}, shopId={}", id, shopId);
                     return cacheValue;
                 }
                 if ((cacheValue = redisService.get(id)) != null) {
@@ -160,7 +166,7 @@ public class CouponTemplateServiceImpl extends ServiceImpl<CouponTemplateMapper,
                         caffeineService.putNullToCache(id);
                         return null;
                     }
-                    log.info("[优惠券模板服务] 获取优惠券模板信息 - 从分布式缓存中获取: id={}, shopId={}", id, shopId);
+                    log.debug("[优惠券模板服务] 获取优惠券模板信息 - 从分布式缓存中获取: id={}, shopId={}", id, shopId);
                     caffeineService.put(id, cacheValue);
                     return cacheValue;
                 }
@@ -175,7 +181,7 @@ public class CouponTemplateServiceImpl extends ServiceImpl<CouponTemplateMapper,
                 cacheValue = BeanUtil.copyProperties(couponTemplate, CouponTemplateQueryRespDTO.class);
                 caffeineService.put(id, cacheValue);
                 redisService.put(id, cacheValue);
-                log.info("[优惠券模板服务] 获取优惠券模板信息 - 缓存重建成功: id={}, shopId={}", id, shopId);
+                log.debug("[优惠券模板服务] 获取优惠券模板信息 - 缓存重建成功: id={}, shopId={}", id, shopId);
                 return cacheValue;
             } else {
                 log.warn("[优惠券模板服务] 获取优惠券模板信息，重建缓存 - 线程:{}, 获取锁失败", Thread.currentThread().getName());
@@ -191,7 +197,7 @@ public class CouponTemplateServiceImpl extends ServiceImpl<CouponTemplateMapper,
         } finally {
             if (lock.isHeldByCurrentThread()) {
                 lock.unlock();
-                log.info("[优惠券模板服务] 获取优惠券模板信息，重建缓存 - 线程:{}, 释放锁成功", Thread.currentThread().getName());
+                log.debug("[优惠券模板服务] 获取优惠券模板信息，重建缓存 - 线程:{}, 释放锁成功", Thread.currentThread().getName());
             }
         }
     }

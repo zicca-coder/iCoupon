@@ -88,5 +88,5 @@ rocketmq:
   producer:
     group: iCoupon-coupon-producer-group
     send-message-timeout: 5000
-    retry-times-when-send-failed: 5
-    retry-times-when-send-async-failed: 5
+    retry-times-when-send-failed: 2
+    retry-times-when-send-async-failed: 2

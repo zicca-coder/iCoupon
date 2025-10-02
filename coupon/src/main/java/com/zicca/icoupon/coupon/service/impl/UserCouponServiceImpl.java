@@ -3,49 +3,36 @@ package com.zicca.icoupon.coupon.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.lang.Singleton;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.zicca.icoupon.coupon.common.enums.RedisStockDecrementErrorEnum;
 import com.zicca.icoupon.coupon.common.enums.UserCouponStatusEnum;
-import com.zicca.icoupon.coupon.dao.entity.CouponTemplate;
 import com.zicca.icoupon.coupon.dao.entity.UserCoupon;
-import com.zicca.icoupon.coupon.dao.mapper.CouponTemplateMapper;
 import com.zicca.icoupon.coupon.dao.mapper.UserCouponMapper;
 import com.zicca.icoupon.coupon.dto.req.UserCouponBathLockReqDTO;
-import com.zicca.icoupon.coupon.dto.req.UserCouponCreateReqDTO;
 import com.zicca.icoupon.coupon.dto.req.UserCouponListReqDTO;
 import com.zicca.icoupon.coupon.dto.req.UserCouponReceiveReqDTO;
 import com.zicca.icoupon.coupon.dto.resp.CouponTemplateQueryRespDTO;
 import com.zicca.icoupon.coupon.dto.resp.UserCouponQueryRespDTO;
-import com.zicca.icoupon.coupon.mq.event.UserCouponReceiveEvent;
-import com.zicca.icoupon.coupon.mq.producer.UserCouponReceiveProducer;
+import com.zicca.icoupon.coupon.mq.event.StockUpdateEvent;
+import com.zicca.icoupon.coupon.mq.producer.StockUpdateProducer;
 import com.zicca.icoupon.coupon.service.CouponTemplateService;
 import com.zicca.icoupon.coupon.service.UserCouponService;
 import com.zicca.icoupon.coupon.service.basics.cache.UserCouponRedisService;
-import com.zicca.icoupon.coupon.toolkit.StockDecrementReturnCombinedUtil;
 import com.zicca.icoupon.framework.exception.ClientException;
 import com.zicca.icoupon.framework.exception.ServiceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.client.producer.SendStatus;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.script.DefaultRedisScript;
-import org.springframework.scripting.support.ResourceScriptSource;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
-import static com.zicca.icoupon.coupon.common.constants.RedisConstant.COUPON_TEMPLATE_KEY;
-import static com.zicca.icoupon.coupon.common.constants.RedisConstant.USER_COUPON_LIMIT_KEY;
 import static com.zicca.icoupon.coupon.common.enums.CouponTemplateStatusEnum.IN_PROGRESS;
+import static com.zicca.icoupon.coupon.common.enums.StockUpdateTypeEnum.USER_RECEIVE_COUPON;
 import static com.zicca.icoupon.coupon.common.enums.UserCouponStatusEnum.LOCKED;
-import static com.zicca.icoupon.coupon.common.enums.UserCouponStatusEnum.NOT_USED;
 
 /**
  * 用户优惠券服务实现类
@@ -61,12 +48,12 @@ public class UserCouponServiceImpl extends ServiceImpl<UserCouponMapper, UserCou
     private final CouponTemplateService couponTemplateService;
     private final StringRedisTemplate stringRedisTemplate;
     private final UserCouponRedisService redisService;
-    private final UserCouponReceiveProducer userCouponReceiveProducer;
+    private final StockUpdateProducer stockUpdateProducer;
 
 
 
     @Override
-    public void receiveCoupon(UserCouponReceiveReqDTO requestParam) {
+    public void receiveCouponMQ(UserCouponReceiveReqDTO requestParam) {
         // 参数校验
         if (requestParam == null || requestParam.getUserId() == null || requestParam.getCouponTemplateId() == null) {
             log.warn("[用户优惠券服务] 领取优惠券 - 请求参数不完整");
@@ -83,16 +70,23 @@ public class UserCouponServiceImpl extends ServiceImpl<UserCouponMapper, UserCou
             log.warn("[用户优惠券服务] 领取优惠券 - 用户领取优惠券失败, templateId: {}, shopId: {}", requestParam.getCouponTemplateId(), requestParam.getShopId());
             return;
         }
-        // 消息队列发送消息，扣减数据库库存以及新增用户优惠券记录
-        UserCouponReceiveEvent event = UserCouponReceiveEvent.builder()
+        StockUpdateEvent.UserCouponReceiveEvent receiveEvent = StockUpdateEvent.UserCouponReceiveEvent.builder()
+                .couponTemplateId(template.getId())
+                .shopId(template.getShopId())
+                .userId(requestParam.getUserId())
                 .receiveCount(receiveCount)
                 .couponTemplate(template)
-                .requestParam(requestParam)
-                .userId(requestParam.getUserId())
+                .count(1)
                 .build();
-        SendResult sendResult = userCouponReceiveProducer.sendMessage(event);
-        // 事务消息？？？
-        // 消息发送失败，需要回滚Redis库存，用户领取优惠券数量减1
+
+        StockUpdateEvent event = StockUpdateEvent.builder()
+                .type(USER_RECEIVE_COUPON)
+                .couponTemplateId(template.getId())
+                .userCouponReceiveEvent(receiveEvent)
+                .build();
+
+        SendResult sendResult = stockUpdateProducer.sendMessage(event);
+
         if (!Objects.equals(sendResult.getSendStatus(), SendStatus.SEND_OK)) {
             log.warn("[用户优惠券服务] 领取优惠券，用户领取优惠券事件 - 消息发送失败, templateId: {}, shopId: {}, errorCode: {}, errorMsg: {}", requestParam.getCouponTemplateId(), requestParam.getShopId(), sendResult.getSendStatus(), sendResult.getMsgId());
             return;
@@ -101,7 +95,7 @@ public class UserCouponServiceImpl extends ServiceImpl<UserCouponMapper, UserCou
     }
 
     @Override
-    public void createUserCoupon(UserCouponCreateReqDTO requestParam) {
+    public void receiveCouponByCanal(UserCouponReceiveReqDTO requestParam) {
 
     }
 

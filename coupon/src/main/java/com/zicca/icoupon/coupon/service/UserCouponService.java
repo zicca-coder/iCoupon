@@ -24,15 +24,14 @@ public interface UserCouponService extends IService<UserCoupon> {
      *
      * @param requestParam 用户领取优惠券请求参数
      */
-    void receiveCoupon(UserCouponReceiveReqDTO requestParam);
-
+    void receiveCouponMQ(UserCouponReceiveReqDTO requestParam);
 
     /**
-     * 创建用户优惠券记录
+     * 用户领取优惠券
      *
-     * @param requestParam 创建用户优惠券请求参数
+     * @param requestParam 用户领取优惠券请求参数
      */
-    void createUserCoupon(UserCouponCreateReqDTO requestParam);
+    void receiveCouponByCanal(UserCouponReceiveReqDTO requestParam);
 
 
     /**
